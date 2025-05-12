@@ -4,3 +4,7 @@
     color: rgb(107, 214, 35);
     font-family: Arial;
 }
+
+body {
+    background-image: url(images/backgrounds/jungle.jpg);
+}
