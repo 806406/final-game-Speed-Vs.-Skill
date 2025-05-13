@@ -7,4 +7,19 @@
 
 body {
     background-image: url(images/backgrounds/jungle.jpg);
+    background-size: 100%;
+    text-align: center;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: aliceblue;
+}
+
+h1 {
+    font-size: 1500%;
+}
+
+canvas {
+  border: 5px solid lightgreen;
+  margin: 20px auto;
+  display: block;
+  background-color: #1c1c1c;
 }
