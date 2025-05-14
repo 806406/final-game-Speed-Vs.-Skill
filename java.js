@@ -49,9 +49,18 @@ var speedAttack
 
 function speedAttack(){
 
-}
 
+}
 
 function updateGame() {
   drawSnakeBody() //figure out the rest of the major functions that will be needed to start the game and then add them here. 
 }
+
+function updateGame() {
+  drawSnakeBody() //figure out the rest of the major functions that will be needed to start the game and then add them here. 
+}
+
+var snakehealth
+
+function snakeHealth() {}
+
