@@ -1,3 +1,4 @@
+var snakeBody 
 
 function drawSnakeBody() {
     snakeBody.forEach((segment, index) => {
@@ -14,10 +15,37 @@ function drawSnakeBody() {
 var gorillaBody
 
 functiondrawGorillaBody() {
-  gorillaBody.forEach((segment, index) => {
     ctx.fillStyle = WebGLQuery;
     ctx.fillRect(segment.x * 8, segment.y * 8)
   }
-)}
 updateGame();
 
+var gorillaAttack
+
+  function gorillaAttack() {
+
+  }
+
+var gorillaGrapple
+
+function gorillaGrapple() {
+
+}
+
+var bananaAttack
+
+function bananaAttack() {
+
+}
+
+var snakeBite 
+
+function snakeBite() {
+
+}
+
+var speedAttack
+
+function speedAttack(){
+  
+}
