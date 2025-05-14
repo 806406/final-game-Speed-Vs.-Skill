@@ -18,8 +18,17 @@ h1 {
 }
 
 canvas {
-  border: 5px solid lightgreen;
-  margin: 20px auto;
-  display: block;
-  background-color: #1c1c1c;
+    border: 5px solid lightgreen;
+    margin: 20px auto;
+    display: block;
+    background-color: #1c1c1c;
+}
+
+input {
+    background: #a6ffd5;
+    color: darkslategrey;
+    font-size: 300%;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    border-radius: 20px;
+    border-color: forestgreen;
 }
