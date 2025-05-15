@@ -1,17 +1,23 @@
-var snakeBody
-var gorillaBody
+var snakeBody = [];
+var gorillaBody = [];
+
+var gorillaRight = false
+
+var gorillaLeft = false
 
 function drawSnakeBody() {
     snakeBody.forEach((segment, index) => {
-        ctx.fillStyle = green;
+        ctx.fillStyle = "green";
         ctx.fillRect(segment.x * 4, segment.y * 4, 4, 4); //figure out what this does and how to actually fill a snake in 
     }
   )
 }
 
 function drawGorillaBody() {
-  ctx.fillStyle = WebGLQuery;
-  ctx.fillRect(segment.x * 8, segment.y * 8)
+  gorillaBody.forEach((segment) => {
+    ctx.fillStyle = "brown";
+    ctx.fillRect(segment.x * 8, segment.y * 8, 8, 8);
+  });
 }
 updateGame();
 
@@ -52,9 +58,6 @@ function speedAttack(){
 
 }
 
-function updateGame() {
-  drawSnakeBody() //figure out the rest of the major functions that will be needed to start the game and then add them here. 
-}
 
 function updateGame() {
   drawSnakeBody() //figure out the rest of the major functions that will be needed to start the game and then add them here. 
@@ -64,3 +67,37 @@ var snakehealth
 
 function snakeHealth() {}
 
+var healUp   
+
+function healUp(){
+}
+
+document.addEventListener("keydown", (event) => {
+  switch (event.key) {
+    case "w":
+      gorillaJump
+      break;
+    case "s":
+      direction = "down"
+      break;
+    case "a":
+      direction = "left"
+      break;
+    case "d":
+      direction = "right"
+      break;
+
+
+  }
+})
+
+  setInterval(updateGame, 100);
+
+    generatefood();
+    
+
+
+
+function gorillaJump(){
+
+}
