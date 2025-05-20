@@ -144,15 +144,15 @@ function startGameplay(level) {
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(levelSelectImgLeft, leftxval, 0);
-      ctx.drawImage(levelSelectImgRight, ((leftxval * -1) + (canvas.width / 2)), 0);
+      ctx.drawImage(levelSelectImgRight, (leftxval * -1), 0);
 
       setTimeout(() => {
         function openAnim() {
-          if (leftxval >= -700) {
+          if (leftxval >= -1000) {
             leftxval -= 6;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(levelSelectImgLeft, leftxval, 0);
-            ctx.drawImage(levelSelectImgRight, ((leftxval * -1) + (canvas.width / 2)), 0);
+            ctx.drawImage(levelSelectImgRight, (leftxval * -1), 0);
             requestAnimationFrame(openAnim);
           }
         }
