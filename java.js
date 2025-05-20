@@ -472,3 +472,11 @@ function gorillaJump(){
 
 
 }
+
+var gravity
+
+let isJumping = false
+let velocityY = 0;
+let gravity = 0.5; // Adjust for jump height/speed
+let jumpStrength = -10; // negative value for upward movement
+let groundLevel // let groundLevel = 100; // the y-coordinate of the ground
