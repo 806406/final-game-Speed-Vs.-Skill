@@ -6,12 +6,13 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Speed Vs. Skill</h1>
-    <h2>A PVP game about a speedy snake and a tough gorilla.</h2>
-    <h2> The first one to reach 10 kills will win! Who will win this battle?</h2>
+    <h1> <p id="title"> Speed Vs. Skill </p> </h1>
+    <h2> <p id="overview"> A PVP game about a speedy snake and a tough gorilla. </p> </h2>
+    <h2> <p id="overview2"> The first one to reach 5 kills will win the round, and there are a total of 3 rounds! Who will win in the end?</p> </h2>
+
 
     <p id="StartGameButton"> <input type="button" value="Start Game!" onclick="startButtonAnimation();"/> </p>
-    <p hidden> <canvas id="gameCanvas" width=1400 height=650></canvas> </p>
+    <canvas id="gameCanvas" width=0 height=0></canvas> <!-- set to 0 and 0 as it is changed later in the start button animation. real is 1400 by 600 -->
     <script src="java.js"></script>
 </body>
 </html>
