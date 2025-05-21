@@ -1,3 +1,6 @@
+let snakeHealthValue = 100;
+let gorillaHealthValue = 100;
+
 var snakeBody = [];
 var gorillaBody = [];
 
@@ -347,7 +350,36 @@ function bananaAttack() {
 var gorillaHealth
 
 function gorillaHealth() {
+  const width = 150;
+  const height = 15;
+  const x = 20;
+  const y = 15;
 
+  ctx.strokeStyle = "black";
+  ctx.strokeRect(x, y, width, height,);
+
+  ctx.fillStyle = "green"
+  ctx.fillRect(x, y, (gorillaHealthValue / 100) * width, height);
+}
+
+ 
+var snakehealth
+
+function snakeHealth(){
+  const width = 150;
+  const height = 15;
+  const x = 230;
+  const y = 10; 
+
+  ctx.strokeStyle = "Black"
+  ctx.strokeRect(x, y, width, height,);
+
+  ctx. fillStyle = "blue";
+  ctx.fillRect(x, y, (snakeHealthValue / 100) * width, height);
+
+  ctx.fillStyle = "black";
+  ctx.font = "12px Trebuchet MS";
+  ctx.fillText("Snake", x + 50, y + 12);
 }
 
 var snakeBite 
@@ -365,12 +397,19 @@ function speedAttack(){
 
 
 function updateGame() {
-  drawSnakeBody() //figure out the rest of the major functions that will be needed to start the game and then add them here. 
+  drawSnakeBody()
+  clearCanvas();
+  moveSnake();
+  moveGorilla();
+
+  drawSnakeBody();
+  drawGorillaBody();
+  gorillaHealth();
+  snakeHealth(); //figure out the rest of the major functions that will be needed to start the game and then add them here. 
 }
 
-var snakehealth
 
-function snakeHealth() {}
+
 
 var healUp   
 
