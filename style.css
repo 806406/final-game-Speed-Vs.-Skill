@@ -5,6 +5,14 @@
     font-family: Arial;
 }
 
+.gorilla {
+    color: #fff200;
+}
+
+.snake {
+    color: #00ff5e;
+}
+
 body {
     background-image: url(images/backgrounds/jungle.jpg);
     background-size: 100%;
@@ -18,6 +26,9 @@ h1 {
 }
 
 canvas {
+    background-image: url(images/backgrounds/levelselectbackground.png);
+    background-size: 1400px 600px;
+    image-rendering: pixelated;
     margin: 20px auto;
     display: block;
     background-color: #1c1c1c;

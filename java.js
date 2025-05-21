@@ -111,30 +111,54 @@ function startButtonAnimation() {
   }, 500);
   setTimeout(() => {
     title.style.fontSize = "20%";
-    overview.style.fontSize = "10%";
-    overview2.style.fontSize = "5%";
+    overview.style.fontSize = "40%";
+    overview2.style.fontSize = "40%";
     startButton.style.fontSize = "5%";
     canvas.width = 1260;
     canvas.height = 540;
   }, 550);
   setTimeout(() => {
     title.style.fontSize = "15%";
-    overview.style.fontSize = "15%";
-    overview2.style.fontSize = "1%";
+    overview.style.fontSize = "50%";
+    overview2.style.fontSize = "50%";
     startButton.style.fontSize = "1%";
     canvas.width = 1400;
     canvas.height = 600;
     startLevelSelect();
   }, 600);
   setTimeout(() => {
-    overview.innerHTML = "";
-    overview2.innerHTML = "";
+    overview.style.fontSize = "100%";
+    overview2.style.fontSize = "100%";
+    overview.innerHTML = "(The first to 8 kills wins)";
+    overview2.innerHTML = "<span class='gorilla'>GORILLA CONTROLS:</span> <br> W & Space - Jump <br> A - Move Left <br> D - Move Right <br><br> <span class='snake'>SNAKE CONTROLS:</span> <br> Mouse Movement - Move <br> Left Click - Attack";
     startButton.innerHTML = "";
   }, 650);
 }
 
 function startGameplay(level) {
   alreadyPickedLevel = true;
+
+  if (level == "1") {
+    // do later 
+  } else if (level == "2") {
+    canvas.style.backgroundImage = "url('images/backgrounds/desertlevel.png')";
+  } else if (level == "3") {
+    canvas.style.backgroundImage = "url('images/backgrounds/cloud.png')";
+  } else if (level == "4") {
+    // do later
+  } else if (level == "random") {
+    var randomLev = Math.floor(Math.random() * 4) + 1;
+
+    if (randomLev == 1) {
+      //do later
+    } else if (randomLev == 2) {
+      canvas.style.backgroundImage = "url('images/backgrounds/desertlevel.png')";
+    } else if (randomLev == 3) {
+      canvas.style.backgroundImage = "url('images/backgrounds/cloud.png')";
+    } else if (randomLev == 4) {
+      //do later
+    }
+  }
 
   var levelSelectImgLeft = new Image();
   levelSelectImgLeft.src = 'images/backgrounds/levelselectLeft10.png';
@@ -190,14 +214,14 @@ function startLevelSelect() {
   var level2imgy = 160;
   level2img.width = 210;
   level2img.height = 90;
-  level2img.src = 'images/backgrounds/placeholder3x.png';
+  level2img.src = 'images/backgrounds/desertlevel.png';
 
   var level3img = new Image();
   var level3imgx = ((canvas.width / 2) - 300);
   var level3imgy = 320;
   level3img.width = 210;
   level3img.height = 90;
-  level3img.src = 'images/backgrounds/placeholder3x.png';
+  level3img.src = 'images/backgrounds/cloud.png';
 
   var level4img = new Image();
   var level4imgx = ((canvas.width / 2) + 105);
@@ -233,12 +257,15 @@ function startLevelSelect() {
     
       ctx.font = "30px Lucida Sans Unicode";
       ctx.fillText("Level 1 Placeholder", ((canvas.width / 2) - 200), 280);
-      ctx.fillText("Level 2 Placeholder", ((canvas.width / 2) + 205), 280);
-      ctx.fillText("Level 3 Placeholder", ((canvas.width / 2) - 200), 440);
+      ctx.fillText("Dangerous Desert", ((canvas.width / 2) + 205), 280);
+      ctx.fillText("Cloud Kingdom", ((canvas.width / 2) - 200), 440);
       ctx.fillText("Level 4 Placeholder", ((canvas.width / 2) + 205), 440);
 
       ctx.fillStyle = "#eea3ff";
       ctx.fillText("RANDOM LEVEL", (canvas.width / 2), 580);
+      ctx.font = "15px Lucida Sans Unicode";
+      ctx.fillText("(New level every death)", (canvas.width / 2), 595);
+      ctx.font = "30px Lucida Sans Unicode";
 
       ctx.drawImage(level1img, level1imgx, level1imgy, level1img.width, level1img.height);
       ctx.drawImage(level2img, level2imgx, level2imgy, level1img.width, level1img.height);
