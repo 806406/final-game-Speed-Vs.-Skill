@@ -27,6 +27,54 @@ var groundLevel = 530; // where the ground starts. if a sprite's y level is grea
 var moveMouseX = 0;
 var moveMouseY = 0;
 
+const unpauseBoxY = 250;
+const menuBoxY = 400;
+const boxWidth = 200;
+const boxHeight = 50;
+
+var level1img = new Image();
+var level1imgx = ((canvas.width / 2) - 300);
+var level1imgy = 160;
+level1img.width = 210;
+level1img.height = 90;
+level1img.src = 'images/backgrounds/green land background level.png';
+
+var level2img = new Image();
+var level2imgx = ((canvas.width / 2) + 105);
+var level2imgy = 160;
+level2img.width = 210;
+level2img.height = 90;
+level2img.src = 'images/backgrounds/desertlevel.png';
+
+var level3img = new Image();
+var level3imgx = ((canvas.width / 2) - 300);
+var level3imgy = 320;
+level3img.width = 210;
+level3img.height = 90;
+level3img.src = 'images/backgrounds/cloud.png';
+
+var level4img = new Image();
+var level4imgx = ((canvas.width / 2) + 105);
+var level4imgy = 320;
+level4img.width = 210;
+level4img.height = 90;
+level4img.src = 'images/backgrounds/cave level.png';
+
+var randomimg = new Image();
+var randomimgx = ((canvas.width / 2) - 105);
+var randomimgy = 460;
+randomimg.width = 210;
+randomimg.height = 90;
+randomimg.src = 'images/backgrounds/random.png';
+
+var levelSelectImgLeft = new Image();
+levelSelectImgLeft.src = 'images/backgrounds/levelselectLeft10.png';
+var levelSelectImgRight = new Image();
+levelSelectImgRight.src = 'images/backgrounds/levelselectRight10.png';
+
+canvas.width = 0
+canvas.height = 0
+
 function startButtonAnimation() {
   var title = document.getElementById("title");
   var overview = document.getElementById("overview");
@@ -169,11 +217,6 @@ function startGameplay(level) {
     }
   }
 
-  var levelSelectImgLeft = new Image();
-  levelSelectImgLeft.src = 'images/backgrounds/levelselectLeft10.png';
-  var levelSelectImgRight = new Image();
-  levelSelectImgRight.src = 'images/backgrounds/levelselectRight10.png';
-
   function drawAll() {
     if (levelSelectImgLeft.complete == true && levelSelectImgRight.complete == true) {
       var leftxval = 0;
@@ -206,60 +249,24 @@ function startGameplay(level) {
     drawAll();
   }
 
+  drawAll();
+
   setTimeout(() => {
     inGame = true;
   }, 3000);
 }
 
 function startLevelSelect() {
-  var levelSelectMain = new Image();
-  levelSelectMain.src = 'images/backgrounds/levelselectbackground.png'; 
-
-  var level1img = new Image();
-  var level1imgx = ((canvas.width / 2) - 300);
-  var level1imgy = 160;
-  level1img.width = 210;
-  level1img.height = 90;
-  level1img.src = 'images/backgrounds/green land background level.png';
-
-  var level2img = new Image();
-  var level2imgx = ((canvas.width / 2) + 105);
-  var level2imgy = 160;
-  level2img.width = 210;
-  level2img.height = 90;
-  level2img.src = 'images/backgrounds/desertlevel.png';
-
-  var level3img = new Image();
-  var level3imgx = ((canvas.width / 2) - 300);
-  var level3imgy = 320;
-  level3img.width = 210;
-  level3img.height = 90;
-  level3img.src = 'images/backgrounds/cloud.png';
-
-  var level4img = new Image();
-  var level4imgx = ((canvas.width / 2) + 105);
-  var level4imgy = 320;
-  level4img.width = 210;
-  level4img.height = 90;
-  level4img.src = 'images/backgrounds/cave level.png';
-
-  var randomimg = new Image();
-  var randomimgx = ((canvas.width / 2) - 105);
-  var randomimgy = 460;
-  randomimg.width = 210;
-  randomimg.height = 90;
-  randomimg.src = 'images/backgrounds/random.png';
-
   ctx.font = "40px Trebuchet MS";
   ctx.textAlign = "center";
   ctx.fillStyle = "#edf4ff";
   ctx.fillText("LOADING", (canvas.width / 2), (canvas.height / 2));
 
+  canvas.style.backgroundImage = "url('images/backgrounds/levelselectbackground.png')";
+
   function drawAll() {
-    if (level1img.complete == true && level2img.complete == true && level3img.complete == true && level4img.complete == true && randomimg.complete == true && levelSelectMain.complete == true) {
+    if (level1img.complete == true && level2img.complete == true && level3img.complete == true && level4img.complete == true && randomimg.complete == true) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      ctx.drawImage(levelSelectMain, 0, 0);
 
       ctx.fillStyle = "#445775";
       ctx.fillText("LEVEL SELECT", (canvas.width / 2), 106);
@@ -289,10 +296,6 @@ function startLevelSelect() {
     }
   }
 
-  levelSelectMain.onload = () => {
-    drawAll();
-  }
-
   level1img.onload = () => {
     drawAll();
   }
@@ -313,15 +316,38 @@ function startLevelSelect() {
     drawAll();
   }
 
-  canvas.addEventListener("click", (event) => {
-    var mousex = event.offsetX;
-    var mousey = event.offsetY;
+  drawAll();
+}
 
+document.addEventListener("keydown", (event) => {
+  switch (event.key) {
+    case "w":
+      gorillaJump();
+      break;
+    case "s":
+      direction = "down"
+      break;
+    case "a":
+      direction = "left"
+      break;
+    case "d":
+      direction = "right"
+      break;
+    case "Escape":
+      pauseUnpause();
+      break;
+  }
+})
+
+canvas.addEventListener("click", (event) => {
+  var mousex = event.offsetX;
+  var mousey = event.offsetY;
+
+  if (inGame == false && paused == false) {
     function innerLevelAnim(level) {
       if (alreadyPickedLevel == true) { return; }
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(levelSelectMain, 0, 0);
 
       ctx.font = "40px Trebuchet MS";
       ctx.textAlign = "center";
@@ -350,28 +376,22 @@ function startLevelSelect() {
     if (mousex >= randomimgx - randomimg.width && mousex <= randomimgx + randomimg.width && mousey >= randomimgy - randomimg.height && mousey <= randomimgy + randomimg.height) {
       innerLevelAnim("random");
     }
-  });
-}
+  } else if (inGame == true && paused == true) {
+    if (mousex >= (canvas.width / 2) - boxWidth && mousex <= (canvas.width / 2) + boxWidth && mousey >= unpauseBoxY - boxHeight && mousey <= unpauseBoxY + boxHeight) {
+      paused = false;
+    }
 
-document.addEventListener("keydown", (event) => {
-  switch (event.key) {
-    case "w":
-      gorillaJump();
-      break;
-    case "s":
-      direction = "down"
-      break;
-    case "a":
-      direction = "left"
-      break;
-    case "d":
-      direction = "right"
-      break;
-    case "Escape":
-      pauseUnpause();
-      break;
+    if (mousex >= (canvas.width / 2) - boxWidth && mousex <= (canvas.width / 2) + boxWidth && mousey >= menuBoxY - boxHeight && mousey <= menuBoxY + boxHeight) {
+      inGame = false;
+      paused = false;
+      alreadyPickedLevel = false;
+
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      canvas.style.backgroundImage = "url('images/backgrounds/levelselectbackground.png')";
+      startLevelSelect();
+    }
   }
-})
+});
 
 canvas.addEventListener("mousemove", (event) => {
   moveMouseX = event.offsetX;
@@ -391,6 +411,20 @@ function pauseUnpause() {
     ctx.textAlign = "center";
     ctx.fillStyle = "white";
     ctx.fillText("PAUSED", (canvas.width / 2), 150);
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+    ctx.fillRect(((canvas.width / 2) - (boxWidth / 2)), (unpauseBoxY - (boxHeight / 1.25)), boxWidth, boxHeight);
+
+    ctx.fillStyle = "white";
+    ctx.font = "40px Trebuchet MS";
+    ctx.fillText("Unpause", (canvas.width / 2), 250);
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+    ctx.fillRect(((canvas.width / 2) - (boxWidth / 2)), (menuBoxY - (boxHeight / 1.25)), boxWidth, boxHeight);
+
+    ctx.fillStyle = "white";
+    ctx.font = "30px Trebuchet MS";
+    ctx.fillText("Quit to Menu", (canvas.width / 2), 395);
   } else {
     paused = false;
   }
@@ -495,7 +529,6 @@ function updateGame() {
   if (paused == true) { return; }
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  console.log('test');
 
   moveSnake();
   moveGorilla();
