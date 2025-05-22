@@ -508,13 +508,6 @@ function updateGame() {
 }
 
 
-
-
-var healUp   
-
-function healUp(){
-}
-
 document.addEventListener("keydown", (event) => {
   switch (event.key) {
     case "w":
@@ -550,12 +543,5 @@ document.addEventListener("keyup", (event) => {
   }
 })
 
-setInterval(updateGame, 100);
-
-
-
-function gorillaJump(){
-
-}
 
 setInterval(updateGame, 1);
