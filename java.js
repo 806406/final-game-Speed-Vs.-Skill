@@ -1,6 +1,7 @@
 let snakeHealthValue = 100;
 let gorillaHealthValue = 100;
 
+var snakeHead = { x: 0, y: 0};
 var snakeBody = [];
 var gorillaBody = [];
 
@@ -12,6 +13,8 @@ var canvas = document.getElementById("gameCanvas")
 var ctx = canvas.getContext("2d");
 
 var alreadyPickedLevel = false;
+var inGame = false;
+var paused = false;
 
 var gravity = 2; // temp value of 2, will change this later depending on how we want the gameplay to feel.
 
@@ -19,7 +22,10 @@ var isJumping = false
 var velocityY = 0;
 var gravity = 0.5; // Adjust for jump height/speed
 var jumpStrength = -10; // negative value for upward movement
-var groundLevel = 100; // let groundLevel = 100; // the y-coordinate of the ground
+var groundLevel = 530; // where the ground starts. if a sprite's y level is greater or equal to this, dont let it move!
+
+var moveMouseX = 0;
+var moveMouseY = 0;
 
 function startButtonAnimation() {
   var title = document.getElementById("title");
@@ -196,6 +202,10 @@ function startGameplay(level) {
   levelSelectImgRight.onload = () => {
     drawAll();
   }
+
+  setTimeout(() => {
+    inGame = true;
+  }, 3000);
 }
 
 function startLevelSelect() {
@@ -340,12 +350,75 @@ function startLevelSelect() {
   });
 }
 
+document.addEventListener("keydown", (event) => {
+  switch (event.key) {
+    case "w":
+      gorillaJump();
+      break;
+    case "s":
+      direction = "down"
+      break;
+    case "a":
+      direction = "left"
+      break;
+    case "d":
+      direction = "right"
+      break;
+    case "Escape":
+      pauseUnpause();
+      break;
+  }
+})
+
+canvas.addEventListener("mousemove", (event) => {
+  moveMouseX = event.offsetX;
+  moveMouseY = event.offsetY;
+})
+
+function pauseUnpause() {
+  if (inGame == false) { return; }
+
+  if (paused == false) {
+    paused = true;
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    ctx.font = "70px Trebuchet MS";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "white";
+    ctx.fillText("PAUSED", (canvas.width / 2), 150);
+  } else {
+    paused = false;
+  }
+}
+
+function moveGorilla() {
+
+}
+
+function moveSnake() {
+  var distanceFromX = moveMouseX - snakeHead.x;
+  var distanceFromY = moveMouseY - snakeHead.y;
+
+  snakeHead.x += (distanceFromX / 100);
+
+  if (snakeHead.y <= groundLevel) {
+    snakeHead.y += (distanceFromY / 100);
+  } else {
+    snakeHead.y = groundLevel
+  }
+}
+
 function drawSnakeBody() {
-    snakeBody.forEach((segment, index) => {
-        ctx.fillStyle = "green";
-        ctx.fillRect(segment.x * 4, segment.y * 4, 4, 4); //figure out what this does and how to actually fill a snake in 
-    }
-  )
+  /*snakeBody.forEach((segment, index) => {
+    ctx.fillStyle = "green";
+    ctx.fillRect(segment.x * 4, segment.y * 4, 4, 4); //figure out what this does and how to actually fill a snake in 
+  })*/
+
+  // temporary test draw
+  ctx.fillStyle = "black";
+  ctx.fillRect(snakeHead.x, snakeHead.y, 50, 50);
 }
 
 function drawGorillaBody() {
@@ -356,25 +429,17 @@ function drawGorillaBody() {
 }
 updateGame();
 
-var gorillaAttack
+function gorillaAttack() {
 
-  function gorillaAttack() {
-
-  }
-
-var gorillaGrapple
+}
 
 function gorillaGrapple() {
 
 }
 
-var bananaAttack
-
 function bananaAttack() {
 
 }
-
-var gorillaHealth
 
 function gorillaHealth() {
   const width = 150;
@@ -388,9 +453,6 @@ function gorillaHealth() {
   ctx.fillStyle = "green"
   ctx.fillRect(x, y, (gorillaHealthValue / 100) * width, height);
 }
-
- 
-var snakehealth
 
 function snakeHealth(){
   const width = 150;
@@ -409,63 +471,37 @@ function snakeHealth(){
   ctx.fillText("Snake", x + 50, y + 12);
 }
 
-var snakeBite 
-
 function snakeBite() {
 
 }
 
-var speedAttack
-
 function speedAttack(){
 
-
 }
-
-
-function updateGame() {
-  drawSnakeBody()
-  clearCanvas();
-  moveSnake();
-  moveGorilla();
-
-  drawSnakeBody();
-  drawGorillaBody();
-  gorillaHealth();
-  snakeHealth(); //figure out the rest of the major functions that will be needed to start the game and then add them here. 
-}
-
-
-
-
-var healUp   
 
 function healUp(){
+
 }
-
-document.addEventListener("keydown", (event) => {
-  switch (event.key) {
-    case "w":
-      gorillaJump
-      break;
-    case "s":
-      direction = "down"
-      break;
-    case "a":
-      direction = "left"
-      break;
-    case "d":
-      direction = "right"
-      break;
-
-
-  }
-})
-
-setInterval(updateGame, 100);
-
-
 
 function gorillaJump(){
 
 }
+
+function updateGame() {
+  if (inGame == false) { return; }
+  if (paused == true) { return; }
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  console.log('test');
+
+  moveSnake();
+  moveGorilla();
+
+  drawSnakeBody()
+  drawGorillaBody();
+
+  gorillaHealth();
+  snakeHealth(); //figure out the rest of the major functions that will be needed to start the game and then add them here. 
+}
+
+setInterval(updateGame, 1);
