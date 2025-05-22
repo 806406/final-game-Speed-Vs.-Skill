@@ -145,24 +145,27 @@ function startGameplay(level) {
   alreadyPickedLevel = true;
 
   if (level == "1") {
-    // do later 
+    canvas.style.backgroundImage = "url('images/backgrounds/green land background level.png')";
   } else if (level == "2") {
     canvas.style.backgroundImage = "url('images/backgrounds/desertlevel.png')";
   } else if (level == "3") {
     canvas.style.backgroundImage = "url('images/backgrounds/cloud.png')";
   } else if (level == "4") {
-    // do later
+    canvas.style.backgroundImage = "url('images/backgrounds/cave level.png')";
+
   } else if (level == "random") {
     var randomLev = Math.floor(Math.random() * 4) + 1;
 
     if (randomLev == 1) {
-      //do later
+    canvas.style.backgroundImage = "url('images/backgrounds/green land background level.png')";
+
     } else if (randomLev == 2) {
       canvas.style.backgroundImage = "url('images/backgrounds/desertlevel.png')";
     } else if (randomLev == 3) {
       canvas.style.backgroundImage = "url('images/backgrounds/cloud.png')";
     } else if (randomLev == 4) {
-      //do later
+    canvas.style.backgroundImage = "url('images/backgrounds/cave level.png')";
+
     }
   }
 
@@ -217,7 +220,7 @@ function startLevelSelect() {
   var level1imgy = 160;
   level1img.width = 210;
   level1img.height = 90;
-  level1img.src = 'images/backgrounds/placeholder3x.png';
+  level1img.src = 'images/backgrounds/green land background level.png';
 
   var level2img = new Image();
   var level2imgx = ((canvas.width / 2) + 105);
@@ -238,7 +241,7 @@ function startLevelSelect() {
   var level4imgy = 320;
   level4img.width = 210;
   level4img.height = 90;
-  level4img.src = 'images/backgrounds/placeholder3x.png';
+  level4img.src = 'images/backgrounds/cave level.png';
 
   var randomimg = new Image();
   var randomimgx = ((canvas.width / 2) - 105);
@@ -266,10 +269,10 @@ function startLevelSelect() {
       ctx.fillText("LEVEL SELECT", (canvas.width / 2), 100);
     
       ctx.font = "30px Lucida Sans Unicode";
-      ctx.fillText("Level 1 Placeholder", ((canvas.width / 2) - 200), 280);
+      ctx.fillText("Grasslands", ((canvas.width / 2) - 200), 280);
       ctx.fillText("Dangerous Desert", ((canvas.width / 2) + 205), 280);
       ctx.fillText("Cloud Kingdom", ((canvas.width / 2) - 200), 440);
-      ctx.fillText("Level 4 Placeholder", ((canvas.width / 2) + 205), 440);
+      ctx.fillText("Cave of Doom and Despair", ((canvas.width / 2) + 205), 440);
 
       ctx.fillStyle = "#eea3ff";
       ctx.fillText("RANDOM LEVEL", (canvas.width / 2), 580);
@@ -502,6 +505,57 @@ function updateGame() {
 
   gorillaHealth();
   snakeHealth(); //figure out the rest of the major functions that will be needed to start the game and then add them here. 
+}
+
+
+
+
+var healUp   
+
+function healUp(){
+}
+
+document.addEventListener("keydown", (event) => {
+  switch (event.key) {
+    case "w":
+      gorillaJump
+      break;
+    case "s":
+      direction = "down"
+      break;
+    case "a":
+      direction = "left"
+      break;
+    case "d":
+      direction = "right"
+      break;
+
+
+  }
+})
+
+document.addEventListener("keyup", (event) => {
+  switch (event.key) {
+    case "s":
+      direction = "down"
+      break;
+    case "a":
+      direction = "left"
+      break;
+    case "d":
+      direction = "right"
+      break;
+
+
+  }
+})
+
+setInterval(updateGame, 100);
+
+
+
+function gorillaJump(){
+
 }
 
 setInterval(updateGame, 1);
