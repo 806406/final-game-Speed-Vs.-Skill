@@ -2,7 +2,7 @@ let snakeHealthValue = 100;
 let gorillaHealthValue = 100;
 
 var snakeHead = { x: 0, y: 0};
-var snakeBody = [];
+var snakeBody = [{ x: 0, y: 0 }];
 var gorillaBody = [];
 
 var gorillaRight = false
@@ -71,6 +71,11 @@ var levelSelectImgLeft = new Image();
 levelSelectImgLeft.src = 'images/backgrounds/levelselectLeft10.png';
 var levelSelectImgRight = new Image();
 levelSelectImgRight.src = 'images/backgrounds/levelselectRight10.png';
+
+var snakeHeadIMG = new Image();
+snakeHeadIMG.src = 'images/sprites/snakehead.png';
+var snakeHeadIMGRight = new Image();
+snakeHeadIMGRight.src = 'images/sprites/snakeheadright.png';
 
 canvas.width = 0
 canvas.height = 0
@@ -446,17 +451,32 @@ function moveSnake() {
   } else {
     snakeHead.y = groundLevel
   }
+
+  snakeBody.unshift({ x: snakeHead.x, y: snakeHead.y });
+  if (snakeBody.length > 60) {
+    snakeBody.splice(60);
+  }
 }
 
 function drawSnakeBody() {
-  /*snakeBody.forEach((segment, index) => {
-    ctx.fillStyle = "green";
-    ctx.fillRect(segment.x * 4, segment.y * 4, 4, 4); //figure out what this does and how to actually fill a snake in 
-  })*/
+  snakeBody.forEach((segment, index) => {
+    ctx.fillStyle = "rgb(80,213,45)";
+    ctx.beginPath();
+    ctx.arc(
+      segment.x,
+      segment.y,
+      20,
+      2 * Math.PI,
+      false
+    );
+    ctx.fill();
+  })
 
-  // temporary test draw
-  ctx.fillStyle = "black";
-  ctx.fillRect(snakeHead.x, snakeHead.y, 50, 50);
+  if (moveMouseX < snakeHead.x) {
+    ctx.drawImage(snakeHeadIMG, (snakeHead.x - (snakeHeadIMG.width / 2)) - 40, (snakeHead.y - (snakeHeadIMG.height / 2)) - 5, 108, 66);
+  } else if (moveMouseX > snakeHead.x) {
+    ctx.drawImage(snakeHeadIMGRight, (snakeHead.x - (snakeHeadIMGRight.width / 2)) + 40, (snakeHead.y - (snakeHeadIMGRight.height / 2)) - 5, 108, 66);
+  }
 }
 
 function drawGorillaBody() {
