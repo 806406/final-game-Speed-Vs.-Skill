@@ -409,6 +409,7 @@ function pauseUnpause() {
 
     ctx.font = "70px Trebuchet MS";
     ctx.textAlign = "center";
+    ctx.textBaseline = 'middle';
     ctx.fillStyle = "white";
     ctx.fillText("PAUSED", (canvas.width / 2), 150);
 
@@ -417,14 +418,14 @@ function pauseUnpause() {
 
     ctx.fillStyle = "white";
     ctx.font = "40px Trebuchet MS";
-    ctx.fillText("Unpause", (canvas.width / 2), 250);
+    ctx.fillText("Unpause", (canvas.width / 2), 240);
 
     ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
     ctx.fillRect(((canvas.width / 2) - (boxWidth / 2)), (menuBoxY - (boxHeight / 1.25)), boxWidth, boxHeight);
 
     ctx.fillStyle = "white";
     ctx.font = "30px Trebuchet MS";
-    ctx.fillText("Quit to Menu", (canvas.width / 2), 395);
+    ctx.fillText("Quit to Menu", (canvas.width / 2), 390);
   } else {
     paused = false;
   }
@@ -479,33 +480,51 @@ function bananaAttack() {
 }
 
 function gorillaHealth() {
-  const width = 150;
-  const height = 15;
-  const x = 20;
+  const width = 200;
+  const height = 25;
+  const x = 15;
   const y = 15;
 
-  ctx.strokeStyle = "black";
-  ctx.strokeRect(x, y, width, height,);
+  ctx.lineWidth = 10;
+  ctx.strokeStyle = "rgb(55, 56, 18)"
+  ctx.beginPath();
+  ctx.rect(x,y,width,height);
+  ctx.stroke();
 
-  ctx.fillStyle = "green"
+  ctx.fillStyle = "rgb(72, 73, 27)";
+  ctx.fillRect(x, y, width, height);
+  ctx.fillStyle = "rgb(253, 255, 117)"
   ctx.fillRect(x, y, (gorillaHealthValue / 100) * width, height);
+
+  ctx.fillStyle = "black";
+  ctx.textAlign = "center";
+  ctx.textBaseline = 'middle';
+  ctx.font = "20px Trebuchet MS";
+  ctx.fillText("Gorilla", (x + (width / 2)), (y + (height / 2)));
 }
 
 function snakeHealth(){
-  const width = 150;
-  const height = 15;
-  const x = 230;
-  const y = 10; 
+  const width = 200;
+  const height = 25;
+  const x = 240;
+  const y = 15;
 
-  ctx.strokeStyle = "Black"
-  ctx.strokeRect(x, y, width, height,);
+  ctx.lineWidth = 10;
+  ctx.strokeStyle = "rgb(18, 56, 23)"
+  ctx.beginPath();
+  ctx.rect(x,y,width,height);
+  ctx.stroke();
 
-  ctx. fillStyle = "blue";
+  ctx.fillStyle = "rgb(27, 73, 37)";
+  ctx.fillRect(x, y, width, height);
+  ctx.fillStyle = "rgb(117, 255, 147)"
   ctx.fillRect(x, y, (snakeHealthValue / 100) * width, height);
 
   ctx.fillStyle = "black";
-  ctx.font = "12px Trebuchet MS";
-  ctx.fillText("Snake", x + 50, y + 12);
+  ctx.textAlign = "center";
+  ctx.textBaseline = 'middle';
+  ctx.font = "20px Trebuchet MS";
+  ctx.fillText("Snake", (x + (width / 2)), (y + (height / 2)));
 }
 
 function snakeBite() {
