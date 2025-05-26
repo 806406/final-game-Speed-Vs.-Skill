@@ -46,6 +46,11 @@ var venomSpitPos = { x: 0, y: 0};
 var canDrawVenomSpitLine = false;
 var venomSpitActive = false;
 
+// level damage sprites
+var tumbleweedPos = {x: 999, y: 999};
+var tumbledDamagedGorilla = false;
+var tumbledDamagedSnake = false;
+
 var level1img = new Image();
 var level1imgx = ((canvas.width / 2) - 300);
 var level1imgy = 160;
@@ -718,7 +723,7 @@ function snakeBite() {
   var distanceFromGorillaX = Math.abs(snakeHead.x - gorillaBody.x)
   var distanceFromGorillaY = Math.abs(snakeHead.y - gorillaBody.y)
 
-  if (distanceFromGorillaX <= 140 && distanceFromGorillaY <= 140) {
+  if (distanceFromGorillaX <= 110 && distanceFromGorillaY <= 110) {
     gorillaHealthValue -= 10;
   }
 
@@ -915,6 +920,46 @@ function roundWin(playerWhoWon) {
   }
 }
 
+function moveAndDrawLevelEvents() {
+  if (currentLevel == "2") {
+    if (tumbledDamagedGorilla == false) {
+      var distanceFromGorillaX = Math.abs(tumbleweedPos.x - gorillaBody.x)
+      var distanceFromGorillaY = Math.abs(tumbleweedPos.y - gorillaBody.y)
+
+      if (distanceFromGorillaX <= 30 && distanceFromGorillaY <= 30) {
+        gorillaHealthValue -= 10;
+        tumbledDamagedGorilla = true;
+      }
+    }
+
+    if (tumbledDamagedSnake == false) {
+      var distanceFromSnakeX = Math.abs(tumbleweedPos.x - snakeHead.x)
+      var distanceFromSnakeX = Math.abs(tumbleweedPos.y - snakeHead.y)
+
+      if (distanceFromSnakeX <= 30 && distanceFromSnakeX <= 30) {
+        snakeHealthValue -= 10;
+        tumbledDamagedSnake = true;
+      }
+    }
+
+    tumbleweedPos.x += 2;
+    ctx.fillStyle = "red";
+    ctx.fillRect(tumbleweedPos.x - 50, tumbleweedPos.y - 50, 100, 100); // temp art
+  }
+}
+
+function levelEvents() {
+  if (inGame == true && paused == false) {
+    if (currentLevel == "2") {
+      // tumbleweed stuff
+      tumbleweedPos.x = -150;
+      tumbleweedPos.y = groundLevel - 100;
+      tumbledDamagedGorilla = false;
+      tumbledDamagedSnake = false;
+    }
+  }
+}
+
 function updateGame() {
   if (inGame == false) { return; }
   if (paused == true) { return; }
@@ -924,6 +969,7 @@ function updateGame() {
   moveSnake();
   moveGorilla();
 
+  moveAndDrawLevelEvents();
   drawGorillaBody();
   drawSnakeBody();
 
@@ -973,3 +1019,8 @@ document.addEventListener("keyup", (event) => {
 
 
 setInterval(updateGame, 1);
+setInterval(levelEvents, 10000);
+
+// EASTER EGGS!!
+
+// By doing the Konami code during gameplay, the snake will despawn for a short bit and will spawn 10 marios that will attempt to attack the gorilla. When one attacks, they will despawn. However, all of them will despawn either way after 15 seconds. Each mario does 5 damage.
