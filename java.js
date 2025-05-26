@@ -979,7 +979,7 @@ function moveAndDrawLevelEvents() {
       var distanceFromGorillaX = Math.abs(chomperPos.x - gorillaBody.x)
       var distanceFromGorillaY = Math.abs(chomperPos.y - gorillaBody.y)
 
-      if (distanceFromGorillaX <= 80 && distanceFromGorillaY <= 80) {
+      if (distanceFromGorillaX <= 100 && distanceFromGorillaY <= 100) {
         gorillaHealthValue -= 15;
         chomperDamagedGorilla = true;
       }
@@ -989,13 +989,13 @@ function moveAndDrawLevelEvents() {
       var distanceFromSnakeX = Math.abs(chomperPos.x - snakeHead.x)
       var distanceFromSnakeY = Math.abs(chomperPos.y - snakeHead.y)
 
-      if (distanceFromSnakeX <= 80 && distanceFromSnakeY <= 80) {
+      if (distanceFromSnakeX <= 100 && distanceFromSnakeY <= 100) {
         snakeHealthValue -= 15;
         chomperDamagedSnake = true;
       }
     }
 
-    chomperPos.x += 3;
+    chomperPos.x += 2;
     ctx.fillStyle = "red";
     ctx.drawImage(chomperIMG, chomperPos.x - 100,  chomperPos.y -100, 200, 200);
   }
