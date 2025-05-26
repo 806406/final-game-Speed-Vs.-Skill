@@ -41,6 +41,11 @@ const boxHeight = 50;
 var canSnakeBite = true;
 var canDrawSnakeAttackSphere = false;
 
+var canVenomSpit = true;
+var venomSpitPos = { x: 0, y: 0};
+var canDrawVenomSpitLine = false;
+var venomSpitActive = false;
+
 var level1img = new Image();
 var level1imgx = ((canvas.width / 2) - 300);
 var level1imgy = 160;
@@ -85,6 +90,9 @@ var snakeHeadIMG = new Image();
 snakeHeadIMG.src = 'images/sprites/snakehead.png';
 var snakeHeadIMGRight = new Image();
 snakeHeadIMGRight.src = 'images/sprites/snakeheadright.png';
+
+var venomSpitIMG = new Image();
+venomSpitIMG.src = 'images/sprites/spit bomb.png';
 
 canvas.width = 0
 canvas.height = 0
@@ -198,7 +206,7 @@ function startButtonAnimation() {
     overview.style.fontSize = "100%";
     overview2.style.fontSize = "100%";
     overview.innerHTML = "(The first to 4 kills wins)";
-    overview2.innerHTML = "<span class='gorilla'>GORILLA CONTROLS:</span> <br> W & Space - Jump <br> A - Move Left <br> D - Move Right <br><br> <span class='snake'>SNAKE CONTROLS:</span> <br> Mouse Movement - Move <br> Left Click - Bite";
+    overview2.innerHTML = "<span class='gorilla'>GORILLA CONTROLS:</span> <br> W & Space - Jump <br> A - Move Left <br> D - Move Right <br><br> <span class='snake'>SNAKE CONTROLS:</span> <br> Mouse Movement - Move <br> Left Click - Bite <br> Right Click - Venom Spit Trap";
     startButton.innerHTML = "";
   }, 650);
 }
@@ -425,6 +433,35 @@ canvas.addEventListener("click", (event) => {
   }
 });
 
+canvas.addEventListener("contextmenu", (event) => { // prevents right click menu from opening on right click
+  event.preventDefault();
+  if (canVenomSpit == false) { return; }
+
+  canVenomSpit = false;
+
+  venomSpitPos.x = moveMouseX;
+  venomSpitPos.y = moveMouseY;
+  if (venomSpitPos.y > groundLevel) {
+    venomSpitPos.y = groundLevel;
+  }
+  canDrawVenomSpitLine = true;
+
+  setTimeout(() => {
+    canDrawVenomSpitLine = false;
+    venomSpitActive = true;
+
+    setTimeout(() => {
+      venomSpitActive = false;
+
+      setTimeout(() => {
+        canVenomSpit = true;
+      }, 4000); // 12 sec cooldown
+
+    }, 7000); // venom lasts for 8 seconds
+
+  }, 1000); // summon venom after 1 second
+});
+
 document.addEventListener("click", (event) => {
   if (inGame == true && paused == false) {
     if (canSnakeBite == true) {
@@ -498,6 +535,19 @@ function moveSnake() {
 }
 
 function drawSnakeBody() {
+  if (canDrawVenomSpitLine == true) {
+    ctx.strokeStyle = "rgba(69, 224, 31, 0.6)";
+    ctx.lineWidth = 15;
+    ctx.beginPath();
+    ctx.moveTo(snakeHead.x, snakeHead.y);
+    ctx.lineTo(venomSpitPos.x, venomSpitPos.y);
+    ctx.stroke();
+  }
+
+  if (venomSpitActive == true) {
+    ctx.drawImage(venomSpitIMG, venomSpitPos.x - 70, venomSpitPos.y - 40, 140, 80);
+  }
+
   snakeBody.forEach((segment, index) => {
     ctx.fillStyle = "rgb(80,213,45)";
     ctx.beginPath();
@@ -585,7 +635,7 @@ function gorillaHealth() {
   ctx.textAlign = "center";
   ctx.textBaseline = 'middle';
   ctx.font = "20px Trebuchet MS";
-  ctx.fillText("Gorilla", (x + (width / 2)), (y + (height / 2)));
+  ctx.fillText("Gorilla (" + gorillaHealthValue + ")", (x + (width / 2)), (y + (height / 2)));
 
   if (gorillaHealthValue <= 0) {
     roundWin("snake");
@@ -613,7 +663,7 @@ function snakeHealth(){
   ctx.textAlign = "center";
   ctx.textBaseline = 'middle';
   ctx.font = "20px Trebuchet MS";
-  ctx.fillText("Snake", (x + (width / 2)), (y + (height / 2)));
+  ctx.fillText("Snake (" + snakeHealthValue + ")", (x + (width / 2)), (y + (height / 2)));
 
   if (snakeHealthValue <= 0) {
     roundWin("gorilla");
@@ -676,6 +726,18 @@ function snakeBite() {
   setTimeout(() => {
     canDrawSnakeAttackSphere = false
   }, 70);
+}
+
+function snakeVenomCheckCollisions() {
+  if (venomSpitActive == false) { return; }
+
+  var distanceFromGorillaX = Math.abs(venomSpitPos.x - gorillaBody.x)
+  var distanceFromGorillaY = Math.abs(venomSpitPos.y - gorillaBody.y)
+
+  if (distanceFromGorillaX <= 65 && distanceFromGorillaY <= 65) {
+    gorillaHealthValue -= 25;
+    venomSpitActive = false;
+  }
 }
 
 function speedAttack(){
@@ -836,7 +898,10 @@ function roundWin(playerWhoWon) {
       openAnim();
     }, 2000);
 
-    setTimeout(() => {      
+    setTimeout(() => {
+      venomSpitActive = false;
+      canVenomSpit = true;
+      canDrawVenomSpitLine = false;
       gorillaHealthValue = 100;
       snakeHealthValue = 100;
       inGame = true;
@@ -866,6 +931,8 @@ function updateGame() {
   gorillaKillCounter();
   snakeHealth();
   snakeKillCounter();
+
+  snakeVenomCheckCollisions();
 }
 
 
