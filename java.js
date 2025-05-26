@@ -99,6 +99,9 @@ snakeHeadIMGRight.src = 'images/sprites/snakeheadright.png';
 var venomSpitIMG = new Image();
 venomSpitIMG.src = 'images/sprites/spit bomb.png';
 
+var tumbleweedIMG = new Image();
+tumbleweedIMG.src = 'images/sprites/tumble weed damage for desert.png';
+
 canvas.width = 0
 canvas.height = 0
 
@@ -210,7 +213,7 @@ function startButtonAnimation() {
   setTimeout(() => {
     overview.style.fontSize = "100%";
     overview2.style.fontSize = "100%";
-    overview.innerHTML = "(The first to 4 kills wins)";
+    overview.innerHTML = "The first to 4 kills wins! <br> Some maps have special events which will try to hurt you!";
     overview2.innerHTML = "<span class='gorilla'>GORILLA CONTROLS:</span> <br> W & Space - Jump <br> A - Move Left <br> D - Move Right <br><br> <span class='snake'>SNAKE CONTROLS:</span> <br> Mouse Movement - Move <br> Left Click - Bite <br> Right Click - Venom Spit Trap";
     startButton.innerHTML = "";
   }, 650);
@@ -430,6 +433,10 @@ canvas.addEventListener("click", (event) => {
       alreadyPickedLevel = false;
       randomModeActive = false;
       currentLevel = "0";
+      tumbleweedPos = {x: 999, y: 999};
+      venomSpitActive = false;
+      canDrawVenomSpitLine = false;
+      canVenomSpit = true;
 
       ctx.clearRect(0,0,canvas.width,canvas.height);
       canvas.style.backgroundImage = "url('images/backgrounds/levelselectbackground.png')";
@@ -909,6 +916,7 @@ function roundWin(playerWhoWon) {
       canDrawVenomSpitLine = false;
       gorillaHealthValue = 100;
       snakeHealthValue = 100;
+      tumbleweedPos = {x: 999, y: 999};
       inGame = true;
       paused = false;
       snakeHead.x = (canvas.width - 150);
@@ -926,25 +934,25 @@ function moveAndDrawLevelEvents() {
       var distanceFromGorillaX = Math.abs(tumbleweedPos.x - gorillaBody.x)
       var distanceFromGorillaY = Math.abs(tumbleweedPos.y - gorillaBody.y)
 
-      if (distanceFromGorillaX <= 30 && distanceFromGorillaY <= 30) {
-        gorillaHealthValue -= 10;
+      if (distanceFromGorillaX <= 80 && distanceFromGorillaY <= 80) {
+        gorillaHealthValue -= 15;
         tumbledDamagedGorilla = true;
       }
     }
 
     if (tumbledDamagedSnake == false) {
       var distanceFromSnakeX = Math.abs(tumbleweedPos.x - snakeHead.x)
-      var distanceFromSnakeX = Math.abs(tumbleweedPos.y - snakeHead.y)
+      var distanceFromSnakeY = Math.abs(tumbleweedPos.y - snakeHead.y)
 
-      if (distanceFromSnakeX <= 30 && distanceFromSnakeX <= 30) {
-        snakeHealthValue -= 10;
+      if (distanceFromSnakeX <= 80 && distanceFromSnakeY <= 80) {
+        snakeHealthValue -= 15;
         tumbledDamagedSnake = true;
       }
     }
 
-    tumbleweedPos.x += 2;
+    tumbleweedPos.x += 4;
     ctx.fillStyle = "red";
-    ctx.fillRect(tumbleweedPos.x - 50, tumbleweedPos.y - 50, 100, 100); // temp art
+    ctx.drawImage(tumbleweedIMG, tumbleweedPos.x - 320, tumbleweedPos.y - 135, 700, 300);
   }
 }
 
@@ -952,8 +960,28 @@ function levelEvents() {
   if (inGame == true && paused == false) {
     if (currentLevel == "2") {
       // tumbleweed stuff
+      var randomTumbleUpOrDown = Math.round(Math.random());
+      var randomTumbleVariation = Math.round(Math.random() * 120);
+
       tumbleweedPos.x = -150;
-      tumbleweedPos.y = groundLevel - 100;
+
+      if (randomTumbleUpOrDown == 0) {
+        tumbleweedPos.y = snakeHead.y + randomTumbleVariation;
+      } else {
+        tumbleweedPos.y = snakeHead.y - randomTumbleVariation;
+      }
+
+      if (tumbleweedPos.y > groundLevel) {
+        tumbleweedPos.y = groundLevel;
+      }
+
+      if (tumbleweedPos.y < 230) {
+        tumbleweedPos.y = gorillaBody.y;
+        if (tumbleweedPos.y < 230) {
+          tumbleweedPos.y = 230;
+        }
+      }
+
       tumbledDamagedGorilla = false;
       tumbledDamagedSnake = false;
     }
@@ -1019,7 +1047,7 @@ document.addEventListener("keyup", (event) => {
 
 
 setInterval(updateGame, 1);
-setInterval(levelEvents, 10000);
+setInterval(levelEvents, 30000);
 
 // EASTER EGGS!!
 
