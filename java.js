@@ -11,9 +11,11 @@ var snakeHead = { x: (canvas.width - 150), y: (canvas.height - 150)};
 var snakeBody = [{x: snakeHead.x, y: snakeHead.y}]
 var gorillaBody = { x: 150, y: (canvas.height - 150)};
 
-var gorillaRight = false
+var gorillaRight = false;
 
-var gorillaLeft = false
+var gravity = .6; 
+
+var gorillaLeft = false;
 
 var alreadyPickedLevel = false;
 var randomModeActive = false;
@@ -22,8 +24,7 @@ var inGame = false;
 var paused = false;
 
 var isJumping = false
-var velocityY = 0;
-var gravity = 0.5; // Adjust for jump height/speed
+var velocityY = -12;
 var jumpStrength = -10; // negative value for upward movement
 var groundLevel = 530; // where the ground starts. if a sprite's y level is greater or equal to this, dont let it fall further down!
 
@@ -50,6 +51,10 @@ var venomSpitActive = false;
 var tumbleweedPos = {x: 999, y: 999};
 var tumbledDamagedGorilla = false;
 var tumbledDamagedSnake = false;
+
+var chomperPos = {x: 999, y: 999};
+var chomperDamagedGorilla = false;
+var chomperDamagedSnake = false;
 
 var raindropPos = {x: 999, y: 999};
 var raindropDamagedGorilla = false;
@@ -109,6 +114,9 @@ venomSpitIMG.src = 'images/sprites/spit bomb.png';
 
 var tumbleweedIMG = new Image();
 tumbleweedIMG.src = 'images/sprites/tumble weed damage for desert.png';
+
+var chomperIMG = new Image();
+chomperIMG.src = 'images/sprites/chomper easter egg.png';
 
 var raindropIMG = new Image();
 raindropIMG.src = 'images/sprites/raindrop damage dealer.png';
@@ -373,20 +381,24 @@ function startLevelSelect() {
 
   drawAll();
 }
+const gorillaImage = new Image();
+gorillaImage.src = "images/sprites/GORILLA_scaled_20x_pngcrushed.png"; // Ensure the image is in your project folder
+
+
 
 document.addEventListener("keydown", (event) => {
   switch (event.key) {
-    case "w":
-      gorillaJump();
+    case "Space":
+      gorillaJump = true;
       break;
-    case "s":
-      direction = "down"
+    case "w":
+      gorillaJump = true;
       break;
     case "a":
-      direction = "left"
+      gorillaLeft = true
       break;
     case "d":
-      direction = "right"
+      gorillaRight = true
       break;
     case "Escape":
       pauseUnpause();
@@ -448,6 +460,7 @@ canvas.addEventListener("click", (event) => {
       randomModeActive = false;
       currentLevel = "0";
       tumbleweedPos = {x: 999, y: 999};
+      chomperPos = {x: 999, y: 999};
       raindropPos = {x: 999, y: 999};
       boulderPos = {x: -999, y: 999};
       venomSpitActive = false;
@@ -540,9 +553,27 @@ function pauseUnpause() {
   }
 }
 
+
+var gorillaJump = false;
+
 function moveGorilla() {
+if (gorillaLeft == true){
+    gorillaBody.x-= 3  
+  }
+if (gorillaRight == true){
+    gorillaBody.x+= 3
+  }
+if (gorillaJump == true){
+  if (gorillaBody.y == 450){
+    gorillaBody.y -=velocityY
+    velocityY += gravity;
+
+
+  }
+}
 
 }
+
 
 function moveSnake() {
   var distanceFromX = moveMouseX - snakeHead.x;
@@ -623,9 +654,7 @@ function drawSnakeBody() {
 }
 
 function drawGorillaBody() {
-  // temporary gorilla body draw
-  ctx.fillStyle = "brown";
-  ctx.fillRect(gorillaBody.x - (150 / 2), gorillaBody.y - (150 / 2), 150, 150);
+ ctx.drawImage(gorillaImage, gorillaBody.x-100, gorillaBody.y-100, 200, 200);
 }
 
 updateGame();
@@ -776,9 +805,6 @@ function healUp(){
 
 }
 
-function gorillaJump(){
-
-}
 
 function roundWin(playerWhoWon) {
   inGame = false;
@@ -933,6 +959,7 @@ function roundWin(playerWhoWon) {
       gorillaHealthValue = 100;
       snakeHealthValue = 100;
       tumbleweedPos = {x: 999, y: 999};
+      chomperPos = {x: 999, y: 999};
       raindropPos = {x: 999, y: 999};
       boulderPos = {x: -999, y: 999};
       inGame = true;
@@ -947,6 +974,31 @@ function roundWin(playerWhoWon) {
 }
 
 function moveAndDrawLevelEvents() {
+  if (currentLevel == "1") {
+    if (chomperDamagedGorilla == false) {
+      var distanceFromGorillaX = Math.abs(chomperPos.x - gorillaBody.x)
+      var distanceFromGorillaY = Math.abs(chomperPos.y - gorillaBody.y)
+
+      if (distanceFromGorillaX <= 80 && distanceFromGorillaY <= 80) {
+        gorillaHealthValue -= 15;
+        chomperDamagedGorilla = true;
+      }
+    }
+
+    if (chomperDamagedSnake == false) {
+      var distanceFromSnakeX = Math.abs(chomperPos.x - snakeHead.x)
+      var distanceFromSnakeY = Math.abs(chomperPos.y - snakeHead.y)
+
+      if (distanceFromSnakeX <= 80 && distanceFromSnakeY <= 80) {
+        snakeHealthValue -= 15;
+        chomperDamagedSnake = true;
+      }
+    }
+
+    chomperPos.x += 3;
+    ctx.fillStyle = "red";
+    ctx.drawImage(chomperIMG, chomperPos.x - 100,  chomperPos.y -100, 200, 200);
+  }
   if (currentLevel == "2") {
     if (tumbledDamagedGorilla == false) {
       var distanceFromGorillaX = Math.abs(tumbleweedPos.x - gorillaBody.x)
@@ -1028,6 +1080,34 @@ function moveAndDrawLevelEvents() {
 
 function levelEvents() {
   if (inGame == true && paused == false) {
+    if (currentLevel == "1") {
+      // chomper stuff
+      var randomChomperUpOrDown = Math.round(Math.random());
+      var randomChomperVariation = Math.round(Math.random() * 120);
+
+      chomperPos.x = -150;
+
+      if (randomChomperUpOrDown == 0) {
+        chomperPos.y = snakeHead.y + randomChomperVariation;
+      } else {
+        chomperPos.y = snakeHead.y - randomChomperVariation;
+      }
+
+      if (chomperPos.y > groundLevel) {
+        chomperPos.y = groundLevel;
+      }
+
+      if (chomperPos.y < 230) {
+        chomperPos.y = gorillaBody.y;
+        if (chomperPos.y < 230) {
+          chomperPos.y = 230;
+        }
+      }
+
+      chomperDamagedGorilla = false;
+      chomperDamagedSnake = false;
+    }
+
     if (currentLevel == "2") {
       // tumbleweed stuff
       var randomTumbleUpOrDown = Math.round(Math.random());
@@ -1104,22 +1184,6 @@ function updateGame() {
   snakeVenomCheckCollisions();
 }
 
-document.addEventListener("keydown", (event) => {
-  switch (event.key) {
-    case "w":
-      gorillaJump();
-      break;
-    case "Space":
-      gorillaJump();
-      break;
-    case "a":
-      gorillaLeft = true;
-      break;
-    case "d":
-      gorillaRight = true;
-      break;
-  }
-})
 
 document.addEventListener("keyup", (event) => {
   switch (event.key) {
