@@ -51,6 +51,14 @@ var tumbleweedPos = {x: 999, y: 999};
 var tumbledDamagedGorilla = false;
 var tumbledDamagedSnake = false;
 
+var raindropPos = {x: 999, y: 999};
+var raindropDamagedGorilla = false;
+var raindropDamagedSnake = false;
+
+var boulderPos  = {x: -999, y: 999};
+var boulderDamagedGorilla = false;
+var boulderDamagedSnake = false;
+
 var level1img = new Image();
 var level1imgx = ((canvas.width / 2) - 300);
 var level1imgy = 160;
@@ -101,6 +109,12 @@ venomSpitIMG.src = 'images/sprites/spit bomb.png';
 
 var tumbleweedIMG = new Image();
 tumbleweedIMG.src = 'images/sprites/tumble weed damage for desert.png';
+
+var raindropIMG = new Image();
+raindropIMG.src = 'images/sprites/raindrop damage dealer.png';
+
+var boulderIMG = new Image();
+boulderIMG.src = 'images/sprites/bolder for cave level.png';
 
 canvas.width = 0
 canvas.height = 0
@@ -434,6 +448,8 @@ canvas.addEventListener("click", (event) => {
       randomModeActive = false;
       currentLevel = "0";
       tumbleweedPos = {x: 999, y: 999};
+      raindropPos = {x: 999, y: 999};
+      boulderPos = {x: -999, y: 999};
       venomSpitActive = false;
       canDrawVenomSpitLine = false;
       canVenomSpit = true;
@@ -821,7 +837,7 @@ function roundWin(playerWhoWon) {
 
   function winGame(playerWhoWon) {
     // placeholder win screen stuff
-    canvas.style.backgroundImage = "url('images/backgrounds/placeholder3x.png')";
+    canvas.style.backgroundImage = "url('images/sprites/win screen.png')";
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (playerWhoWon == "gorilla") {
@@ -917,6 +933,8 @@ function roundWin(playerWhoWon) {
       gorillaHealthValue = 100;
       snakeHealthValue = 100;
       tumbleweedPos = {x: 999, y: 999};
+      raindropPos = {x: 999, y: 999};
+      boulderPos = {x: -999, y: 999};
       inGame = true;
       paused = false;
       snakeHead.x = (canvas.width - 150);
@@ -954,6 +972,58 @@ function moveAndDrawLevelEvents() {
     ctx.fillStyle = "red";
     ctx.drawImage(tumbleweedIMG, tumbleweedPos.x - 320, tumbleweedPos.y - 135, 700, 300);
   }
+
+  if (currentLevel == "3") {
+    if (raindropDamagedGorilla == false) {
+      var distanceFromGorillaX = Math.abs(raindropPos.x - gorillaBody.x)
+      var distanceFromGorillaY = Math.abs(raindropPos.y - gorillaBody.y)
+
+      if (distanceFromGorillaX <= 90 && distanceFromGorillaY <= 90) {
+        gorillaHealthValue -= 20;
+        raindropDamagedGorilla = true;
+      }
+    }
+
+    if (raindropDamagedSnake == false) {
+      var distanceFromSnakeX = Math.abs(raindropPos.x - snakeHead.x)
+      var distanceFromSnakeY = Math.abs(raindropPos.y - snakeHead.y)
+
+      if (distanceFromSnakeX <= 90 && distanceFromSnakeY <= 90) {
+        snakeHealthValue -= 20;
+        raindropDamagedSnake = true;
+      }
+    }
+
+    raindropPos.y += 4;
+    ctx.drawImage(raindropIMG, raindropPos.x - 44, raindropPos.y - 74, 88, 148);
+  }
+
+  if (currentLevel == "4") {
+    if (boulderDamagedGorilla == false) {
+      var distanceFromGorillaX = Math.abs(boulderPos.x - gorillaBody.x)
+      var distanceFromGorillaY = Math.abs(boulderPos.y - gorillaBody.y)
+
+      if (distanceFromGorillaX <= 90 && distanceFromGorillaY <= 90) {
+        gorillaHealthValue -= 40;
+        boulderDamagedGorilla = true;
+      }
+    }
+
+    if (boulderDamagedSnake == false) {
+      var distanceFromSnakeX = Math.abs(boulderPos.x - snakeHead.x)
+      var distanceFromSnakeY = Math.abs(boulderPos.y - snakeHead.y)
+
+      if (distanceFromSnakeX <= 90 && distanceFromSnakeY <= 90) {
+        snakeHealthValue -= 40;
+        boulderDamagedSnake = true;
+      }
+    }
+
+    boulderPos.x -= 3;
+    //ctx.fillStyle = "red";
+    //ctx.fillRect(boulderPos.x, boulderPos.y, 50, 50);
+    ctx.drawImage(boulderIMG, boulderPos.x - 115, boulderPos.y - 95, 230, 190);
+  }
 }
 
 function levelEvents() {
@@ -985,6 +1055,31 @@ function levelEvents() {
       tumbledDamagedGorilla = false;
       tumbledDamagedSnake = false;
     }
+
+    if (currentLevel == "3") {
+      // raindrop stuff
+      var randomRainFollow = Math.round(Math.random());
+
+      raindropPos.y = -150;
+
+      if (randomRainFollow == 0) {
+        raindropPos.x = snakeHead.x;
+      } else {
+        raindropPos.x = gorillaBody.x;
+      }
+
+      raindropDamagedSnake = false;
+      raindropDamagedGorilla = false;
+    }
+
+    if (currentLevel == "4") {
+      // boulder stuff
+
+      boulderPos = {x: 1580, y: 450};
+
+      boulderDamagedGorilla = false;
+      boulderDamagedSnake = false;
+    }
   }
 }
 
@@ -1009,39 +1104,31 @@ function updateGame() {
   snakeVenomCheckCollisions();
 }
 
-
 document.addEventListener("keydown", (event) => {
   switch (event.key) {
     case "w":
-      gorillaJump
+      gorillaJump();
       break;
-    case "s":
-      direction = "down"
+    case "Space":
+      gorillaJump();
       break;
     case "a":
-      direction = "left"
+      gorillaLeft = true;
       break;
     case "d":
-      direction = "right"
+      gorillaRight = true;
       break;
-
-
   }
 })
 
 document.addEventListener("keyup", (event) => {
   switch (event.key) {
-    case "s":
-      direction = "down"
-      break;
     case "a":
-      direction = "left"
+      gorillaLeft = false;
       break;
     case "d":
-      direction = "right"
+      gorillaRight = false;
       break;
-
-
   }
 })
 
