@@ -66,6 +66,11 @@ var venomSpitPos = { x: 0, y: 0};
 var canDrawVenomSpitLine = false;
 var venomSpitActive = false;
 
+var canGrapple = true;
+var grapplePos = { x: 0, y: 0};
+var canDrawGrappleLine = false;
+var grappling = false;
+
 // level damage sprites
 var tumbleweedPos = {x: 999, y: 999};
 var tumbledDamagedGorilla = false;
@@ -262,7 +267,7 @@ function startButtonAnimation() {
     overview.style.fontSize = "100%";
     overview2.style.fontSize = "100%";
     overview.innerHTML = "The first to 4 kills wins! <br> Some maps have special events which will try to hurt you!";
-    overview2.innerHTML = "<span class='gorilla'>GORILLA CONTROLS:</span> <br> W & Space - Jump <br> A - Move Left <br> D - Move Right <br><br> <span class='snake'>SNAKE CONTROLS:</span> <br> Mouse Movement - Move <br> Left Click - Bite <br> Right Click - Venom Spit Trap";
+    overview2.innerHTML = "<span class='gorilla'>GORILLA CONTROLS:</span> <br> W & Space - Jump <br> A - Move Left <br> D - Move Right <br> E - Grapple (Movement translates to direction) <br> F - Punch <br> <br> <span class='snake'>SNAKE CONTROLS:</span> <br> Mouse Movement - Move <br> Left Click - Bite <br> Right Click - Venom Spit Trap";
     startButton.innerHTML = "";
   }, 650);
 }
@@ -353,6 +358,9 @@ function startGameplay(level) {
     venomSpitActive = false;
     canDrawVenomSpitLine = false;
     canVenomSpit = true;
+    canGrapple = true;
+    canDrawGrappleLine = false;
+    grappling = false;
     healUpPos = {x:999,y:999};
   }, 3000);
 }
@@ -427,7 +435,7 @@ gorillaImage.src = "images/sprites/GORILLA_scaled_20x_pngcrushed.png";
 
 document.addEventListener("keydown", (event) => {
   if (inGame == true && paused == false) {
-    if (event.key != " " && event.key != "w" && event.key != "d" && event.key != "Escape" && event.key != "a" && event.key != "f") {
+    if (event.key != " " && event.key != "w" && event.key != "d" && event.key != "Escape" && event.key != "a" && event.key != "e" && event.key != "f") {
       keysPressed.push(event.key);
     }
   }
@@ -450,6 +458,9 @@ document.addEventListener("keydown", (event) => {
       break;
     case "Escape":
       pauseUnpause();
+      break;
+    case "e":
+      gorillaGrapple();
       break;
   }
 
@@ -580,6 +591,9 @@ canvas.addEventListener("click", (event) => {
       venomSpitActive = false;
       canDrawVenomSpitLine = false;
       canVenomSpit = true;
+      canGrapple = true;
+      canDrawGrappleLine = false;
+      grappling = false;
       keysPressed = [];
       alreadyDidKonamiCode = false;
       mariosActive = false;
@@ -673,15 +687,22 @@ function pauseUnpause() {
   }
 }
 
-
-
-
 // Gorilla movement and jump logic
 const gravity = 1.01;
 var fallAmount = 1;
 var isJumpAdding = false;
 
 function moveGorilla() {
+  if (grappling == true) {
+    var distanceFromX = grapplePos.x - gorillaBody.x;
+    var distanceFromY = grapplePos.y - gorillaBody.y;
+
+    gorillaBody.x += (distanceFromX / 30);
+    gorillaBody.y += (distanceFromY / 30);
+
+    return;
+  }
+
   if (gorillaLeft == true) {
     if (gorillaBody.x > 0) {
       gorillaBody.x -= 2.5;
@@ -803,7 +824,16 @@ function drawSnakeBody() {
 }
 
 function drawGorillaBody() {
-  if (canDrawGorillaPunchSphere == true) {
+  if (canDrawGrappleLine == true) {
+    ctx.strokeStyle = "rgba(224, 221, 31, 0.6)";
+    ctx.lineWidth = 12;
+    ctx.beginPath();
+    ctx.moveTo(gorillaBody.x, gorillaBody.y);
+    ctx.lineTo(grapplePos.x, grapplePos.y);
+    ctx.stroke();
+  }
+
+   if (canDrawGorillaPunchSphere == true) {
     ctx.fillStyle = "rgba(255, 70, 70, 0.4)";
     ctx.beginPath();
     ctx.arc(
@@ -824,7 +854,32 @@ function gorillaAttack() {
 }
 
 function gorillaGrapple() {
+  if (canGrapple == false) { return; }
+  if (gorillaRight == true && gorillaLeft == true) { return; }
+  if (gorillaRight == false && gorillaLeft == false) { return; }
 
+  canGrapple = false;
+  canDrawGrappleLine = true;
+  grappling = true;
+
+  if (gorillaRight == true && gorillaLeft == false) {
+    grapplePos.x = gorillaBody.x + 500;
+    grapplePos.y = gorillaBody.y;
+    if (grapplePos.x > 1400) { grapplePos.x = 1400; }
+  } else if (gorillaRight == false && gorillaLeft == true) {
+    grapplePos.x = gorillaBody.x - 500;
+    grapplePos.y = gorillaBody.y;
+    if (grapplePos.x < 0) { grapplePos.x = 0; }
+  }
+
+  setTimeout(() => {
+    grappling = false;
+    canDrawGrappleLine = false;
+  }, 500);
+
+  setTimeout(() => {
+    canGrapple = true;
+  }, 1500);
 }
 
 function bananaAttack() {
@@ -1166,6 +1221,9 @@ function roundWin(playerWhoWon) {
       venomSpitActive = false;
       canVenomSpit = true;
       canDrawVenomSpitLine = false;
+      canGrapple = true;
+      canDrawGrappleLine = false;
+      grappling = false;
       gorillaHealthValue = 100;
       snakeHealthValue = 100;
       tumbleweedPos = {x: 999, y: 999};
@@ -1460,7 +1518,6 @@ document.addEventListener("keyup", (event) => {
     case "w":
       isJumping = false;
       break;
-
   }
 })
 
@@ -1471,3 +1528,6 @@ setInterval(healUpSpawn, 40000);
 // EASTER EGGS!!
 
 // By doing the Konami code during gameplay (only ↑ ↑ ↓ ↓ ← → ← →  because of Gorilla movement), the snake will despawn for a short bit and will spawn 10 marios that will attempt to attack the gorilla. When one attacks, they will despawn. However, all of them will despawn either way after 15 seconds. Each mario does 5 damage, resulting in a total of 50 health delt to the gorilla if they all attack.
+
+
+//Basic movement NOTES:
