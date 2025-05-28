@@ -502,7 +502,7 @@ function gorillaPunch() {
     var distanceFromSnakeX = Math.abs(gorillaBody.x - snakeHead.x)
     var distanceFromSnakeY = Math.abs(gorillaBody.y - snakeHead.y)
  
-    if (distanceFromSnakeX <= 120 && distanceFromSnakeY <= 120) {
+    if (distanceFromSnakeX <= 100 && distanceFromSnakeY <= 100) {
       snakeHealthValue -= 20; 
     }
 
