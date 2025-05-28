@@ -445,13 +445,7 @@ document.addEventListener("keydown", (event) => {
       gorillaRight = true
       break;
     case "f":
-      if (canGorillaPunch == true && inGame == true && paused == false) {
-        canGorillaPunch = false;
-        gorillaPunch();
-        setTimeout(() => {
-          canGorillaPunch = true;
-        }, 800); // 800ms cooldown
-      }
+      gorillaPunch();
       break;
     case "Escape":
       pauseUnpause();
@@ -488,29 +482,35 @@ document.addEventListener("keydown", (event) => {
 
 
 function gorillaPunch() {
-  var distanceFromSnakeX = Math.abs(gorillaBody.x - snakeHead.x)
-  var distanceFromSnakeY = Math.abs(gorillaBody.y - snakeHead.y)
+  if (canGorillaPunch == true && inGame == true && paused == false) {
+    canGorillaPunch = false;
+    setTimeout(() => {
+      canGorillaPunch = true;
+    }, 1000); 
+    var distanceFromSnakeX = Math.abs(gorillaBody.x - snakeHead.x)
+    var distanceFromSnakeY = Math.abs(gorillaBody.y - snakeHead.y)
  
-  if (distanceFromSnakeX <= 120 && distanceFromSnakeY <= 120) {
-    snakeHealthValue -= 12; // 12 damage per punch
-  }
+    if (distanceFromSnakeX <= 120 && distanceFromSnakeY <= 120) {
+      snakeHealthValue -= 20; 
+    }
 
-  canDrawGorillaPunchSphere = true
-  setTimeout(() => {
-    canDrawGorillaPunchSphere = false
-  }, 100); // Show for 100ms
+    canDrawGorillaPunchSphere = true
+    setTimeout(() => {
+      canDrawGorillaPunchSphere = false
+    }, 100);
+  }
 }
 
 
 function drawGorillaBody() {
-  // Draw punch attack sphere if active
+
   if (canDrawGorillaPunchSphere == true) {
-    ctx.fillStyle = "rgba(255, 215, 0, 0.5)"; // Golden yellow with transparency
+    ctx.fillStyle = "rgba(255, 0, 0, 0.5)"; 
     ctx.beginPath();
     ctx.arc(
       gorillaBody.x,
-      gorillaBody.y - 20, // Slightly above gorilla center
-      60, // Radius of 60 pixels
+      gorillaBody.y - 20,
+      60,
       0,
       2 * Math.PI,
       false
