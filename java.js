@@ -419,8 +419,9 @@ function startLevelSelect() {
 
   drawAll();
 }
+
 const gorillaImage = new Image();
-gorillaImage.src = "images/sprites/GORILLA_scaled_20x_pngcrushed.png"; // Ensure the image is in your project folder
+gorillaImage.src = "images/sprites/GORILLA_scaled_20x_pngcrushed.png";
 
 
 
@@ -503,7 +504,6 @@ function gorillaPunch() {
 
 
 function drawGorillaBody() {
-
   if (canDrawGorillaPunchSphere == true) {
     ctx.fillStyle = "rgba(255, 0, 0, 0.5)"; 
     ctx.beginPath();
@@ -519,33 +519,6 @@ function drawGorillaBody() {
   }
  ctx.drawImage(gorillaImage, gorillaBody.x-75, gorillaBody.y-75, 150, 150);
 }
-
-  var keysToString = JSON.stringify(keysPressed)
-  if (keysToString.includes('"ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight"')) {
-    if (alreadyDidKonamiCode == false) {
-      // Activate mario easter egg
-      alreadyDidKonamiCode = true;
-
-      for (let i = 0; i < marioTable.length; i++) {
-        var specificMarioX = "mario" + i + "x";
-        var specificMarioY = "mario" + i + "y";
-
-        marioTable[i][specificMarioX] = snakeHead.x
-        marioTable[i][specificMarioY] = snakeHead.y
-      }
-
-      mariosActive = true
-      snakeHead.y = 999;
-      snakeBody = [{x: 999, y: 999}];
-      keysPressed = [];
-
-      setTimeout(() => {
-        mariosActive = false;
-        mariosThatAttacked = 0;
-      }, 15000);
-    }
-  }
-
 
 canvas.addEventListener("click", (event) => {
   var mousex = event.offsetX;
@@ -830,6 +803,19 @@ function drawSnakeBody() {
 }
 
 function drawGorillaBody() {
+  if (canDrawGorillaPunchSphere == true) {
+    ctx.fillStyle = "rgba(255, 70, 70, 0.4)";
+    ctx.beginPath();
+    ctx.arc(
+      gorillaBody.x,
+      gorillaBody.y,
+      80,
+      2 * Math.PI,
+      false
+    );
+    ctx.fill();
+  }
+
  ctx.drawImage(gorillaImage, gorillaBody.x-75, gorillaBody.y-75, 150, 150);
 }
 
@@ -1477,7 +1463,6 @@ document.addEventListener("keyup", (event) => {
 
   }
 })
-
 
 setInterval(updateGame, 1);
 setInterval(levelEvents, 30000);
