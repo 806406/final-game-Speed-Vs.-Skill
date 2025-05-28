@@ -40,6 +40,9 @@ var currentLevel = "0";
 var inGame = false; 
 var paused = false;
 
+var canGorillaPunch = true;
+var canDrawGorillaPunchSphere = false;
+
 var isJumping = false
 
 var groundLevel = 530; // where the ground starts. if a sprite's y level is greater or equal to this, dont let it fall further down!
@@ -423,7 +426,7 @@ gorillaImage.src = "images/sprites/GORILLA_scaled_20x_pngcrushed.png"; // Ensure
 
 document.addEventListener("keydown", (event) => {
   if (inGame == true && paused == false) {
-    if (event.key != " " && event.key != "w" && event.key != "d" && event.key != "Escape" && event.key != "a") {
+    if (event.key != " " && event.key != "w" && event.key != "d" && event.key != "Escape" && event.key != "a" && event.key != "f") {
       keysPressed.push(event.key);
     }
   }
@@ -440,6 +443,15 @@ document.addEventListener("keydown", (event) => {
       break;
     case "d":
       gorillaRight = true
+      break;
+    case "f":
+      if (canGorillaPunch == true && inGame == true && paused == false) {
+        canGorillaPunch = false;
+        gorillaPunch();
+        setTimeout(() => {
+          canGorillaPunch = true;
+        }, 800); // 800ms cooldown
+      }
       break;
     case "Escape":
       pauseUnpause();
@@ -472,6 +484,68 @@ document.addEventListener("keydown", (event) => {
     }
   }
 })
+
+
+
+function gorillaPunch() {
+  var distanceFromSnakeX = Math.abs(gorillaBody.x - snakeHead.x)
+  var distanceFromSnakeY = Math.abs(gorillaBody.y - snakeHead.y)
+ 
+  if (distanceFromSnakeX <= 120 && distanceFromSnakeY <= 120) {
+    snakeHealthValue -= 12; // 12 damage per punch
+  }
+
+  canDrawGorillaPunchSphere = true
+  setTimeout(() => {
+    canDrawGorillaPunchSphere = false
+  }, 100); // Show for 100ms
+}
+
+
+function drawGorillaBody() {
+  // Draw punch attack sphere if active
+  if (canDrawGorillaPunchSphere == true) {
+    ctx.fillStyle = "rgba(255, 215, 0, 0.5)"; // Golden yellow with transparency
+    ctx.beginPath();
+    ctx.arc(
+      gorillaBody.x,
+      gorillaBody.y - 20, // Slightly above gorilla center
+      60, // Radius of 60 pixels
+      0,
+      2 * Math.PI,
+      false
+    );
+    ctx.fill();
+  }
+ ctx.drawImage(gorillaImage, gorillaBody.x-75, gorillaBody.y-75, 150, 150);
+}
+
+  var keysToString = JSON.stringify(keysPressed)
+  if (keysToString.includes('"ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight"')) {
+    if (alreadyDidKonamiCode == false) {
+      // Activate mario easter egg
+      alreadyDidKonamiCode = true;
+
+      for (let i = 0; i < marioTable.length; i++) {
+        var specificMarioX = "mario" + i + "x";
+        var specificMarioY = "mario" + i + "y";
+
+        marioTable[i][specificMarioX] = snakeHead.x
+        marioTable[i][specificMarioY] = snakeHead.y
+      }
+
+      mariosActive = true
+      snakeHead.y = 999;
+      snakeBody = [{x: 999, y: 999}];
+      keysPressed = [];
+
+      setTimeout(() => {
+        mariosActive = false;
+        mariosThatAttacked = 0;
+      }, 15000);
+    }
+  }
+
 
 canvas.addEventListener("click", (event) => {
   var mousex = event.offsetX;
@@ -1398,6 +1472,7 @@ document.addEventListener("keyup", (event) => {
     case "w":
       isJumping = false;
       break;
+
   }
 })
 
