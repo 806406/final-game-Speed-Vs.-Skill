@@ -1,8 +1,28 @@
 var canvas = document.getElementById("gameCanvas")
 var ctx = canvas.getContext("2d");
 
+let keysPressed = [];
+let alreadyDidKonamiCode = false;
+let mariosActive = false;
+let mariosThatAttacked = 0;
+
+let marioTable = [
+  {mario0x: 999, mario0y: 999, mario0Fall: 1, mario0Speed: 1},
+  {mario1x: 999, mario1y: 999, mario1Fall: 1, mario1Speed: 1.2},
+  {mario2x: 999, mario2y: 999, mario2Fall: 1, mario2Speed: 0.9},
+  {mario3x: 999, mario3y: 999, mario3Fall: 1, mario3Speed: 1.4},
+  {mario4x: 999, mario4y: 999, mario4Fall: 1, mario4Speed: 1.1},
+  {mario5x: 999, mario5y: 999, mario5Fall: 1, mario5Speed: 1.3},
+  {mario6x: 999, mario6y: 999, mario6Fall: 1, mario6Speed: 0.9},
+  {mario7x: 999, mario7y: 999, mario7Fall: 1, mario7Speed: 1.3},
+  {mario8x: 999, mario8y: 999, mario8Fall: 1, mario8Speed: 1.1},
+  {mario9x: 999, mario9y: 999, mario9Fall: 1, mario9Speed: 1.2}
+]
+
 let snakeHealthValue = 100;
 let gorillaHealthValue = 100;
+
+let healUpPos = {x: 999, y: 999};
 
 var gorillaKills = 0;
 var snakeKills = 0;
@@ -124,6 +144,12 @@ raindropIMG.src = 'images/sprites/raindrop damage dealer.png';
 var boulderIMG = new Image();
 boulderIMG.src = 'images/sprites/bolder for cave level.png';
 
+var marioIMG = new Image();
+marioIMG.src = 'images/sprites/Mario.png';
+
+var healUpIMG = new Image();
+healUpIMG.src = 'images/sprites/heal up.png';
+
 canvas.width = 0
 canvas.height = 0
 
@@ -230,6 +256,7 @@ function startButtonAnimation() {
     startButton.style.fontSize = "1%";
     canvas.width = 1400;
     canvas.height = 600;
+    ctx.imageSmoothingEnabled = false;
     startLevelSelect();
   }, 600);
   setTimeout(() => {
@@ -316,6 +343,18 @@ function startGameplay(level) {
     snakeBody = [{x: snakeHead.x, y: snakeHead.y}]
     gorillaBody.x = 150;
     gorillaBody.y = (canvas.height - 150);
+    tumbleweedPos = {x: 999, y: 999};
+    chomperPos = {x: 999, y: 999};
+    raindropPos = {x: 999, y: 999};
+    boulderPos = {x: -999, y: 999};
+    keysPressed = [];
+    alreadyDidKonamiCode = false;
+    mariosActive = false;
+    mariosThatAttacked = 0;
+    venomSpitActive = false;
+    canDrawVenomSpitLine = false;
+    canVenomSpit = true;
+    healUpPos = {x:999,y:999};
   }, 3000);
 }
 
@@ -387,8 +426,14 @@ gorillaImage.src = "images/sprites/GORILLA_scaled_20x_pngcrushed.png"; // Ensure
 
 
 document.addEventListener("keydown", (event) => {
+  if (inGame == true && paused == false) {
+    if (event.key != " " && event.key != "w" && event.key != "d" && event.key != "Escape" && event.key != "a") {
+      keysPressed.push(event.key);
+    }
+  }
+
   switch (event.key) {
-    case "Space":
+    case " ":
       gorillaJump = true;
       break;
     case "w":
@@ -403,6 +448,32 @@ document.addEventListener("keydown", (event) => {
     case "Escape":
       pauseUnpause();
       break;
+  }
+
+  var keysToString = JSON.stringify(keysPressed)
+  if (keysToString.includes('"ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight"')) {
+    if (alreadyDidKonamiCode == false) {
+      // Activate mario easter egg
+      alreadyDidKonamiCode = true;
+
+      for (let i = 0; i < marioTable.length; i++) {
+        var specificMarioX = "mario" + i + "x";
+        var specificMarioY = "mario" + i + "y";
+
+        marioTable[i][specificMarioX] = snakeHead.x
+        marioTable[i][specificMarioY] = snakeHead.y
+      }
+
+      mariosActive = true
+      snakeHead.y = 999;
+      snakeBody = [{x: 999, y: 999}];
+      keysPressed = [];
+
+      setTimeout(() => {
+        mariosActive = false;
+        mariosThatAttacked = 0;
+      }, 15000);
+    }
   }
 })
 
@@ -466,6 +537,11 @@ canvas.addEventListener("click", (event) => {
       venomSpitActive = false;
       canDrawVenomSpitLine = false;
       canVenomSpit = true;
+      keysPressed = [];
+      alreadyDidKonamiCode = false;
+      mariosActive = false;
+      mariosThatAttacked = 0;
+      healUpPos = {x:999,y:999};
 
       ctx.clearRect(0,0,canvas.width,canvas.height);
       canvas.style.backgroundImage = "url('images/backgrounds/levelselectbackground.png')";
@@ -477,6 +553,7 @@ canvas.addEventListener("click", (event) => {
 canvas.addEventListener("contextmenu", (event) => { // prevents right click menu from opening on right click
   event.preventDefault();
   if (canVenomSpit == false) { return; }
+  if (mariosActive == true) { return; }
 
   canVenomSpit = false;
 
@@ -557,25 +634,30 @@ function pauseUnpause() {
 var gorillaJump = false;
 
 function moveGorilla() {
-if (gorillaLeft == true){
-    gorillaBody.x-= 3  
+  if (gorillaLeft == true){
+    if (gorillaBody.x > 0) {
+      gorillaBody.x -= 2.5
+    }
   }
-if (gorillaRight == true){
-    gorillaBody.x+= 3
+
+  if (gorillaRight == true){
+    if (gorillaBody.x < canvas.width) {
+      gorillaBody.x += 2.5
+    }
   }
-if (gorillaJump == true){
-  if (gorillaBody.y == 450){
-    gorillaBody.y -=velocityY
-    velocityY += gravity;
 
-
+  if (gorillaJump == true){
+    if (gorillaBody.y == 450){
+      gorillaBody.y -=velocityY
+      velocityY += gravity;
+    }
   }
-}
-
 }
 
 
 function moveSnake() {
+  if (mariosActive == true) { return; }
+
   var distanceFromX = moveMouseX - snakeHead.x;
   var distanceFromY = moveMouseY - snakeHead.y;
 
@@ -654,10 +736,8 @@ function drawSnakeBody() {
 }
 
 function drawGorillaBody() {
- ctx.drawImage(gorillaImage, gorillaBody.x-100, gorillaBody.y-100, 200, 200);
+ ctx.drawImage(gorillaImage, gorillaBody.x-75, gorillaBody.y-75, 150, 150);
 }
-
-updateGame();
 
 function gorillaAttack() {
 
@@ -791,7 +871,7 @@ function snakeVenomCheckCollisions() {
   var distanceFromGorillaX = Math.abs(venomSpitPos.x - gorillaBody.x)
   var distanceFromGorillaY = Math.abs(venomSpitPos.y - gorillaBody.y)
 
-  if (distanceFromGorillaX <= 65 && distanceFromGorillaY <= 65) {
+  if (distanceFromGorillaX <= 75 && distanceFromGorillaY <= 85) {
     gorillaHealthValue -= 25;
     venomSpitActive = false;
   }
@@ -801,10 +881,53 @@ function speedAttack(){
 
 }
 
-function healUp(){
+function healUpSpawn(){
+  if (inGame == false) { return; }
+  if (paused == true) { return; }
 
+  var randomX = Math.floor(Math.random() * 1400)
+  healUpPos = {x: randomX, y: -50};
+
+  if (healUpPos.x < 70) {
+    healUpPos.x = 70;
+  } else if (healUpPos.x > 1330) {
+    healUpPos.x = 1330;
+  }
 }
 
+function moveAndDrawHeal(){
+  ctx.drawImage(healUpIMG, healUpPos.x - 50, healUpPos.y - 60, 280, 120);
+
+  if (healUpPos.y < groundLevel - 20) {
+    healUpPos.y += 3;
+  }
+
+  var distanceFromGorillaX = Math.abs(healUpPos.x - gorillaBody.x)
+  var distanceFromGorillaY = Math.abs(healUpPos.y - gorillaBody.y)
+
+  if (distanceFromGorillaX <= 80 && distanceFromGorillaY <= 70) {
+    if (gorillaHealthValue < 100) {
+      gorillaHealthValue += 20;
+      healUpPos = {x: 999, y: 999};
+    }
+    if (gorillaHealthValue > 100) {
+      gorillaHealthValue = 100;
+    }
+  }
+
+  var distanceFromSnakeX = Math.abs(healUpPos.x - snakeHead.x)
+  var distanceFromSnakeY = Math.abs(healUpPos.y - snakeHead.y)
+
+  if (distanceFromSnakeX <= 80 && distanceFromSnakeY <= 70) {
+    if (snakeHealthValue < 100) {
+      snakeHealthValue += 20;
+      healUpPos = {x: 999, y: 999};
+    }
+    if (snakeHealthValue > 100) {
+      snakeHealthValue = 100;
+    }
+  }
+}
 
 function roundWin(playerWhoWon) {
   inGame = false;
@@ -887,9 +1010,14 @@ function roundWin(playerWhoWon) {
     setTimeout(() => {
       inGame = false;
       paused = false;
+      keysPressed = [];
       alreadyPickedLevel = false;
       randomModeActive = false;
+      alreadyDidKonamiCode = false;
+      mariosActive = false;
+      mariosThatAttacked = 0;
       currentLevel = "0";
+      healUpPos = {x:999,y:999};
 
       canvas.style.backgroundImage = "url('images/backgrounds/levelselectbackground.png')";
       startLevelSelect();
@@ -969,6 +1097,9 @@ function roundWin(playerWhoWon) {
       snakeBody = [{x: snakeHead.x, y: snakeHead.y}];
       gorillaBody.x = 150;
       gorillaBody.y = (canvas.height - 150);
+      mariosActive = false;
+      mariosThatAttacked = 0;
+      healUpPos = {x:999,y:999};
     }, 3000);
   }
 }
@@ -997,7 +1128,7 @@ function moveAndDrawLevelEvents() {
 
     chomperPos.x += 2;
     ctx.fillStyle = "red";
-    ctx.drawImage(chomperIMG, chomperPos.x - 100,  chomperPos.y -100, 200, 200);
+    ctx.drawImage(chomperIMG, chomperPos.x - 75, chomperPos.y - 75, 150, 150);
   }
   if (currentLevel == "2") {
     if (tumbledDamagedGorilla == false) {
@@ -1071,10 +1202,8 @@ function moveAndDrawLevelEvents() {
       }
     }
 
-    boulderPos.x -= 3;
-    //ctx.fillStyle = "red";
-    //ctx.fillRect(boulderPos.x, boulderPos.y, 50, 50);
-    ctx.drawImage(boulderIMG, boulderPos.x - 115, boulderPos.y - 95, 230, 190);
+    boulderPos.x -= 2;
+    ctx.drawImage(boulderIMG, boulderPos.x - 92, boulderPos.y - 76, 184, 152);
   }
 }
 
@@ -1163,6 +1292,51 @@ function levelEvents() {
   }
 }
 
+function moveMario() {
+  for (let i = 0; i < marioTable.length; i++) {
+    let specificMarioX = "mario" + i + "x";
+    let specificMarioY = "mario" + i + "y";
+    let specificMarioFall = "mario" + i + "Fall";
+    let specificMarioSpeed = "mario" + i + "Speed";
+    let distanceFromGorillaX = Math.abs(gorillaBody.x - marioTable[i][specificMarioX]);
+    let distanceFromGorillaY = Math.abs(gorillaBody.y - marioTable[i][specificMarioY]);
+
+    if (gorillaBody.x < marioTable[i][specificMarioX]) {
+      marioTable[i][specificMarioX] -= marioTable[i][specificMarioSpeed];
+    } else if (gorillaBody.x > marioTable[i][specificMarioX]) {
+      marioTable[i][specificMarioX] += marioTable[i][specificMarioSpeed];
+    }
+
+    if (marioTable[i][specificMarioY] < groundLevel - 60) {
+      marioTable[i][specificMarioFall] *= 1.01;
+      marioTable[i][specificMarioY] += marioTable[i][specificMarioFall];
+    } else {
+      marioTable[i][specificMarioY] = groundLevel - 60;
+      marioTable[i][specificMarioFall] = 1;
+    }
+
+    if (distanceFromGorillaX <= 80 && distanceFromGorillaY <= 80) {
+      gorillaHealthValue -= 5;
+      marioTable[i][specificMarioX] = 999999999999999999999;
+      mariosThatAttacked += 1
+    }
+
+    if (mariosThatAttacked == 10) {
+      mariosActive = false
+      mariosThatAttacked = 0;
+    }
+  }
+}
+
+function drawMario() {
+  for (let i = 0; i < marioTable.length; i++) {
+    let specificMarioX = "mario" + i + "x";
+    let specificMarioY = "mario" + i + "y";
+
+    ctx.drawImage(marioIMG, marioTable[i][specificMarioX] - 480, marioTable[i][specificMarioY] - 180, 560, 240);
+  }
+}
+
 function updateGame() {
   if (inGame == false) { return; }
   if (paused == true) { return; }
@@ -1171,10 +1345,16 @@ function updateGame() {
 
   moveSnake();
   moveGorilla();
+  moveAndDrawHeal();
 
   moveAndDrawLevelEvents();
   drawGorillaBody();
   drawSnakeBody();
+
+  if (mariosActive == true) {
+    moveMario();
+    drawMario();
+  }
 
   gorillaHealth();
   gorillaKillCounter();
@@ -1183,7 +1363,6 @@ function updateGame() {
 
   snakeVenomCheckCollisions();
 }
-
 
 document.addEventListener("keyup", (event) => {
   switch (event.key) {
@@ -1199,7 +1378,8 @@ document.addEventListener("keyup", (event) => {
 
 setInterval(updateGame, 1);
 setInterval(levelEvents, 30000);
+setInterval(healUpSpawn, 40000);
 
 // EASTER EGGS!!
 
-// By doing the Konami code during gameplay, the snake will despawn for a short bit and will spawn 10 marios that will attempt to attack the gorilla. When one attacks, they will despawn. However, all of them will despawn either way after 15 seconds. Each mario does 5 damage.
+// By doing the Konami code during gameplay (only ↑ ↑ ↓ ↓ ← → ← →  because of Gorilla movement), the snake will despawn for a short bit and will spawn 10 marios that will attempt to attack the gorilla. When one attacks, they will despawn. However, all of them will despawn either way after 15 seconds. Each mario does 5 damage, resulting in a total of 50 health delt to the gorilla if they all attack.
