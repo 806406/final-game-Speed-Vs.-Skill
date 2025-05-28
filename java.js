@@ -1065,7 +1065,9 @@ function roundWin(playerWhoWon) {
       gorillaKills += 1
       continueGame();
     } else {
-      winGame();
+      setTimeout(() => {
+        winGame(playerWhoWon);
+      }, 10);
     }
   } else if (playerWhoWon == "snake") {
     if (snakeKills <= 2) {
