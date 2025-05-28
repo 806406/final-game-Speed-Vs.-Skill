@@ -32,9 +32,6 @@ var snakeBody = [{x: snakeHead.x, y: snakeHead.y}]
 var gorillaBody = { x: 150, y: (canvas.height - 150)};
 
 var gorillaRight = false;
-
-var gravity = .6; 
-
 var gorillaLeft = false;
 
 var alreadyPickedLevel = false;
@@ -44,8 +41,7 @@ var inGame = false;
 var paused = false;
 
 var isJumping = false
-var velocityY = -12;
-var jumpStrength = -10; // negative value for upward movement
+
 var groundLevel = 530; // where the ground starts. if a sprite's y level is greater or equal to this, dont let it fall further down!
 
 // constantly updates to your mouse position
@@ -434,10 +430,10 @@ document.addEventListener("keydown", (event) => {
 
   switch (event.key) {
     case " ":
-      gorillaJump = true;
+      isJumping = true;
       break;
     case "w":
-      gorillaJump = true;
+      isJumping = true;
       break;
     case "a":
       gorillaLeft = true
@@ -631,29 +627,53 @@ function pauseUnpause() {
 }
 
 
-var gorillaJump = false;
+
+
+// Gorilla movement and jump logic
+const gravity = 1.01;
+var fallAmount = 1;
+var isJumpAdding = false;
 
 function moveGorilla() {
-  if (gorillaLeft == true){
+  if (gorillaLeft == true) {
     if (gorillaBody.x > 0) {
-      gorillaBody.x -= 2.5
+      gorillaBody.x -= 2.5;
     }
   }
 
-  if (gorillaRight == true){
+  if (gorillaRight == true) {
     if (gorillaBody.x < canvas.width) {
-      gorillaBody.x += 2.5
+      gorillaBody.x += 2.5;
     }
   }
 
-  if (gorillaJump == true){
-    if (gorillaBody.y == 450){
-      gorillaBody.y -=velocityY
-      velocityY += gravity;
+  if (gorillaBody.y < 450) {
+    fallAmount *= gravity;
+    if (isJumpAdding == false) {
+      gorillaBody.y += fallAmount;
     }
+  } else {
+    gorillaBody.y = 450;
+    fallAmount = 1;
+  }
+
+  // Gorilla jump
+  if (isJumping == true) {
+    if (gorillaBody.y >= 450) {
+      fallAmount = 1;
+      isJumpAdding = true;
+      setTimeout(() => {
+        isJumpAdding = false;
+        fallAmount = 0.7;
+      }, 200);
+    }
+  }
+
+  if (isJumpAdding == true) {
+    var jumpAmount = fallAmount * 3.5
+    gorillaBody.y -= jumpAmount;
   }
 }
-
 
 function moveSnake() {
   if (mariosActive == true) { return; }
@@ -1371,6 +1391,12 @@ document.addEventListener("keyup", (event) => {
       break;
     case "d":
       gorillaRight = false;
+      break;
+    case " ":
+      isJumping = false;
+      break;
+    case "w":
+      isJumping = false;
       break;
   }
 })
