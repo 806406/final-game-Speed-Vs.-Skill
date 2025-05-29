@@ -45,9 +45,8 @@ var canDrawGorillaPunchSphere = false;
 
 var isJumping = false
 
-var groundLevel = 530; // where the ground starts. if a sprite's y level is greater or equal to this, dont let it fall further down!
+var groundLevel = 530; 
 
-// constantly updates to your mouse position
 var moveMouseX = 0;
 var moveMouseY = 0;
 
@@ -57,7 +56,7 @@ const menuBoxY = 400;
 const boxWidth = 200;
 const boxHeight = 50;
 
-// attack cooldowns (will check if the attack's variable is true before allowing to attack)
+
 var canSnakeBite = true;
 var canDrawSnakeAttackSphere = false;
 
@@ -458,9 +457,9 @@ function bananaDiscard() {
 
     setTimeout(() => {
       canBananaDiscard = true;
-    }, 4000); // 12 sec cooldown
+    }, 4000); 
 
-  }, 7000); // banana lasts for 8 seconds
+  }, 7000); 
 } 
 
 document.addEventListener("keydown", (event) => {
@@ -645,11 +644,11 @@ canvas.addEventListener("contextmenu", (event) => { // prevents right click menu
 
       setTimeout(() => {
         canVenomSpit = true;
-      }, 4000); // 12 sec cooldown
+      }, 4000); 
 
-    }, 7000); // venom lasts for 8 seconds
+    }, 7000); 
 
-  }, 1000); // summon venom after 1 second
+  }, 1000); 
 });
 
 document.addEventListener("click", (event) => {
@@ -740,7 +739,7 @@ function moveGorilla() {
     fallAmount = 1;
   }
 
-  // Gorilla jump
+  
   if (isJumping == true) {
     if (gorillaBody.y >= 450) {
       fallAmount = 1;
