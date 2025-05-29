@@ -67,7 +67,7 @@ var canDrawVenomSpitLine = false;
 var venomSpitActive = false;
 
 var canBananaDiscard = true;
-var BananaDiscardPos = { x: 0, y: 0};
+var bananaDiscardPos = { x: 0, y: 0};
 var bananaActive = false;
 
 var canGrapple = true;
@@ -438,7 +438,7 @@ const gorillaImage = new Image();
 gorillaImage.src = "images/sprites/GORILLA_scaled_20x_pngcrushed.png";
 
 const bananaDiscardImg = new Image();
-bananaDiscardImg.src = "images/sprites/cropped banana";
+bananaDiscardImg.src = "images/sprites/banana.png";
 
 function bananaDiscard (){
   if (canBananaDiscard == false) { return; }
@@ -1049,6 +1049,17 @@ function snakeVenomCheckCollisions() {
   }
 }
 
+function bananaCheckCollisions() {
+  if (bananaActive == false) { return; }
+
+  var distanceFromSnakeX = Math.abs(BananaDiscardPos.x - snakeBody.x)
+  var distanceFromSnakeY = Math.abs(BananaDiscardPos.y - snakeBody.y)
+
+  if (distanceFromSnakeX <= 75 && distanceFromSnakeY <= 85) {
+    snakeHealthValue -= 25;
+    bananaActive = false;
+  }
+}
 
 function healUpSpawn(){
   if (inGame == false) { return; }
@@ -1522,7 +1533,7 @@ function updateGame() {
   moveSnake();
   moveGorilla();
   moveAndDrawHeal();
-
+  
   moveAndDrawLevelEvents();
   drawGorillaBody();
   drawSnakeBody();
@@ -1538,6 +1549,7 @@ function updateGame() {
   snakeKillCounter();
 
   snakeVenomCheckCollisions();
+  bananaCheckCollisions();
 }
 
 document.addEventListener("keyup", (event) => {
