@@ -66,6 +66,10 @@ var venomSpitPos = { x: 0, y: 0};
 var canDrawVenomSpitLine = false;
 var venomSpitActive = false;
 
+var canBananaDiscard = true;
+var BananaDiscardPos = { x: 0, y: 0};
+var bananaActive = false;
+
 var canGrapple = true;
 var grapplePos = { x: 0, y: 0};
 var canDrawGrappleLine = false;
@@ -358,6 +362,8 @@ function startGameplay(level) {
     venomSpitActive = false;
     canDrawVenomSpitLine = false;
     canVenomSpit = true;
+    canBananaDiscard = true;
+    bananaActive = false;
     canGrapple = true;
     canDrawGrappleLine = false;
     grappling = false;
@@ -431,14 +437,20 @@ function startLevelSelect() {
 const gorillaImage = new Image();
 gorillaImage.src = "images/sprites/GORILLA_scaled_20x_pngcrushed.png";
 
+const bananaDiscardImg = new Image();
+bananaDiscardImg.src = "images/sprites/cropped banana";
 
+function bananaDiscard (){
+
+} 
 
 document.addEventListener("keydown", (event) => {
   if (inGame == true && paused == false) {
-    if (event.key != " " && event.key != "w" && event.key != "d" && event.key != "Escape" && event.key != "a" && event.key != "e" && event.key != "f") {
+    if (event.key != " " && event.key != "w" && event.key != "d" && event.key != "Escape" && event.key != "a" && event.key != "e" && event.key != "f" && event.key != "r") {
       keysPressed.push(event.key);
     }
   }
+
 
   switch (event.key) {
     case " ":
@@ -462,7 +474,11 @@ document.addEventListener("keydown", (event) => {
     case "e":
       gorillaGrapple();
       break;
+    case "r":
+      bananaDiscard();
+      break;
   }
+
 
   var keysToString = JSON.stringify(keysPressed)
   if (keysToString.includes('"ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight"')) {
@@ -591,6 +607,8 @@ canvas.addEventListener("click", (event) => {
       venomSpitActive = false;
       canDrawVenomSpitLine = false;
       canVenomSpit = true;
+      canBananaDiscard = true; 
+      bananaActive = false;
       canGrapple = true;
       canDrawGrappleLine = false;
       grappling = false;
@@ -1220,6 +1238,8 @@ function roundWin(playerWhoWon) {
     setTimeout(() => {
       venomSpitActive = false;
       canVenomSpit = true;
+      canBananaDiscard = true; 
+      bananaActive = false; 
       canDrawVenomSpitLine = false;
       canGrapple = true;
       canDrawGrappleLine = false;
