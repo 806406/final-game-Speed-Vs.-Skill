@@ -441,7 +441,23 @@ const bananaDiscardImg = new Image();
 bananaDiscardImg.src = "images/sprites/cropped banana";
 
 function bananaDiscard (){
+  if (canBananaDiscard == false) { return; }
 
+  canBananaDiscard = false;
+
+  BananaDiscardPos.x = gorillaBody.x;
+  BananaDiscardPos.y = gorillaBody.y;
+
+  bananaActive = true;
+
+  setTimeout(() => {
+    bananaActive = false;
+
+    setTimeout(() => {
+      canBananaDiscard = true;
+    }, 4000); // 12 sec cooldown
+
+  }, 7000); // banana lasts for 8 seconds
 } 
 
 document.addEventListener("keydown", (event) => {
@@ -531,6 +547,9 @@ function gorillaPunch() {
 
 
 function drawGorillaBody() {
+  if (bananaActive == true){
+    ctx.drawImage(bananaDiscardImg, BananaDiscardPos.x-75, BananaDiscardPos.y-75, 150, 150);
+  }
   if (canDrawGorillaPunchSphere == true) {
     ctx.fillStyle = "rgba(255, 0, 0, 0.5)"; 
     ctx.beginPath();
@@ -1030,9 +1049,6 @@ function snakeVenomCheckCollisions() {
   }
 }
 
-function speedAttack(){
-
-}
 
 function healUpSpawn(){
   if (inGame == false) { return; }
