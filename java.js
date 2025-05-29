@@ -267,7 +267,7 @@ function startButtonAnimation() {
     overview.style.fontSize = "100%";
     overview2.style.fontSize = "100%";
     overview.innerHTML = "The first to 4 kills wins! <br> Some maps have special events which will try to hurt you!";
-    overview2.innerHTML = "<span class='gorilla'>GORILLA CONTROLS:</span> <br> W & Space - Jump <br> A - Move Left <br> D - Move Right <br> E - Grapple (Movement translates to direction) <br> F - Punch <br> <br> <span class='snake'>SNAKE CONTROLS:</span> <br> Mouse Movement - Move <br> Left Click - Bite <br> Right Click - Venom Spit Trap";
+    overview2.innerHTML = "Escape - Pause <br> <br> <span class='gorilla'>GORILLA CONTROLS:</span> <br> W & Space - Jump <br> A - Move Left <br> D - Move Right <br> E - Grapple (Movement translates to direction) <br> F - Punch <br> <br> <span class='snake'>SNAKE CONTROLS:</span> <br> Mouse Movement - Move <br> Left Click - Bite <br> Right Click - Venom Spit Trap";
     startButton.innerHTML = "";
   }, 650);
 }
@@ -1532,4 +1532,4 @@ setInterval(healUpSpawn, 40000);
 
 //Basic movement NOTES: THIS IS MAINLY FOR GORILLA GRAPPLE BECAUSE ALL OF THE BASIC LEFT RIGHT AND UP MOVEMENT IS CONTROLLED BY A(LEFT) D(RIGHT) W & SPACEBAR(JUMP)
 //GRAPPLE: For the gorilla to activate the grapple you have to hold the direction you want to move in and then press E, so if you want to grapple to the left, you have to hold A, and then press E, and if you want to grapple right, hold D and press E. Furthermore, you cannot grapple if you are not holding a movement button (A or D), second: you cannot grapple up, THAT IS WHAT JUMPING IS FOR! Third: Yes you can look like a ninja flying in air and it is super cool. Fourth: You cannot hold both left and right and press E, because that doesn't make sense, why would you want to grapple in both directions. 
-//Attacks: There is Gorilla Hit, Gorilla banana throw, Snake bite, and Snake venom spit
+//Attacks: There is Gorilla Hit, Snake bite, and Snake venom spit
